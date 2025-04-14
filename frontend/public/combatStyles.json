@@ -1,0 +1,866 @@
+{
+  "2h": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Chop",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Slash",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Smash",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Axe": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Chop",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Hack",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Smash",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Banner": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Swipe",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Bladed Staff": {
+    "combat_type": "Multiple",
+    "styles": [
+      {
+        "stance": "Jab",
+        "attack_type": "Stab",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Swipe",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Fend",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      },
+      {
+        "stance": "Spell",
+        "attack_type": "Magic",
+        "style": "Defensive Autocast",
+        "experience": ["Magic", "Hitpoints", "Defence"],
+        "boost": "None"
+      },
+      {
+        "stance": "Spell",
+        "attack_type": "Magic",
+        "style": "Autocast",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "None"
+      }
+    ]
+  },
+  "Blaster": {
+    "combat_type": "None",
+    "styles": [
+      {
+        "stance": "Explosive",
+        "attack_type": "Fires explosive round",
+        "style": null,
+        "experience": [],
+        "boost": null
+      },
+      {
+        "stance": "Flamer",
+        "attack_type": "Emits a jet of flame",
+        "style": null,
+        "experience": [],
+        "boost": null
+      }
+    ]
+  },
+  "Bludgeon": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Pummel",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Smash",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      }
+    ]
+  },
+  "Blunt": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Pummel",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Bow": {
+    "combat_type": "Ranged",
+    "styles": [
+      {
+        "stance": "Accurate",
+        "attack_type": "Standard",
+        "style": "Accurate",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "+3 Ranged"
+      },
+      {
+        "stance": "Rapid",
+        "attack_type": "Standard",
+        "style": "Rapid",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "None"
+      },
+      {
+        "stance": "Longrange",
+        "attack_type": "Standard",
+        "style": "Longrange",
+        "experience": ["Ranged", "Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Bulwark": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Pummel",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "None",
+        "style": "None",
+        "experience": [],
+        "boost": "None"
+      }
+    ]
+  },
+  "Chinchompas": {
+    "combat_type": "Ranged",
+    "styles": [
+      {
+        "stance": "Short fuse",
+        "attack_type": "Heavy",
+        "style": "Short fuse",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "+3 Ranged"
+      },
+      {
+        "stance": "Medium fuse",
+        "attack_type": "Heavy",
+        "style": "Medium fuse",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "None"
+      },
+      {
+        "stance": "Long fuse",
+        "attack_type": "Heavy",
+        "style": "Long fuse",
+        "experience": ["Ranged", "Defence", "Hitpoints"],
+        "boost": "None"
+      }
+    ]
+  },
+  "Claw": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Chop",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Slash",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Crossbow": {
+    "combat_type": "Ranged",
+    "styles": [
+      {
+        "stance": "Accurate",
+        "attack_type": "Heavy",
+        "style": "Accurate",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "+3 Ranged"
+      },
+      {
+        "stance": "Rapid",
+        "attack_type": "Heavy",
+        "style": "Rapid",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "None"
+      },
+      {
+        "stance": "Longrange",
+        "attack_type": "Heavy",
+        "style": "Longrange",
+        "experience": ["Ranged", "Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Gun": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Aim and Fire",
+        "attack_type": "None",
+        "style": "None",
+        "experience": [],
+        "boost": "None"
+      },
+      {
+        "stance": "Kick",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      }
+    ]
+  },
+  "Multi-Style": {
+    "combat_type": "Multiple",
+    "styles": [
+      {
+        "stance": "Melee",
+        "attack_type": "Stab",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Ranged",
+        "attack_type": "Ranged",
+        "style": "Rapid",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "None"
+      },
+      {
+        "stance": "Magic",
+        "attack_type": "Magic",
+        "style": "Defensive",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Partisan": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Stab",
+        "attack_type": "Stab",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Pickaxe": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Spike",
+        "attack_type": "Stab",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Impale",
+        "attack_type": "Stab",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Smash",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Polearm": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Jab",
+        "attack_type": "Stab",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Swipe",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Fend",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Polestaff": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Bash",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Powered": {
+    "combat_type": "Magic",
+    "styles": [
+      {
+        "stance": "Accurate",
+        "attack_type": "Magic",
+        "style": "Accurate",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Magic"
+      },
+      {
+        "stance": "Accurate",
+        "attack_type": "Magic",
+        "style": "Accurate",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Magic"
+      },
+      {
+        "stance": "Longrange",
+        "attack_type": "Magic",
+        "style": "Longrange",
+        "experience": ["Magic", "Defence", "Hitpoints"],
+        "boost": "+1 Magic, +3 Defence"
+      }
+    ]
+  },
+  "Powered Wand": {
+    "combat_type": "Magic",
+    "styles": [
+      {
+        "stance": "Accurate",
+        "attack_type": "Magic",
+        "style": "Accurate",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Magic"
+      },
+      {
+        "stance": "Accurate",
+        "attack_type": "Magic",
+        "style": "Accurate",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Magic"
+      },
+      {
+        "stance": "Longrange",
+        "attack_type": "Magic",
+        "style": "Longrange",
+        "experience": ["Magic", "Defence", "Hitpoints"],
+        "boost": "+1 Magic, +3 Defence"
+      }
+    ]
+  },
+  "Salamander": {
+    "combat_type": "Multiple",
+    "styles": [
+      {
+        "stance": "Scorch",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Flare",
+        "attack_type": "Standard",
+        "style": "Accurate",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "+3 Ranged"
+      },
+      {
+        "stance": "Blaze",
+        "attack_type": "Magic",
+        "style": "Defensive",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Scythe": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Reap",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Chop",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Jab",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Slash": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Chop",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Slash",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Spear": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Swipe",
+        "attack_type": "Slash",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Spiked": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Pummel",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Spike",
+        "attack_type": "Stab",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Stab": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Stab",
+        "attack_type": "Stab",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Lunge",
+        "attack_type": "Stab",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Slash",
+        "attack_type": "Slash",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Stab",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Staff": {
+    "combat_type": "Multiple",
+    "styles": [
+      {
+        "stance": "Bash",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Pound",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Focus",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      },
+      {
+        "stance": "Spell",
+        "attack_type": "Magic",
+        "style": "Defensive Autocast",
+        "experience": ["Magic", "Hitpoints", "Defence"],
+        "boost": "None"
+      },
+      {
+        "stance": "Spell",
+        "attack_type": "Magic",
+        "style": "Autocast",
+        "experience": ["Magic", "Hitpoints"],
+        "boost": "None"
+      }
+    ]
+  },
+  "Thrown": {
+    "combat_type": "Ranged",
+    "styles": [
+      {
+        "stance": "Accurate",
+        "attack_type": "Light",
+        "style": "Accurate",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "+3 Ranged"
+      },
+      {
+        "stance": "Rapid",
+        "attack_type": "Light",
+        "style": "Rapid",
+        "experience": ["Ranged", "Hitpoints"],
+        "boost": "None"
+      },
+      {
+        "stance": "Longrange",
+        "attack_type": "Light",
+        "style": "Longrange",
+        "experience": ["Ranged", "Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Unarmed": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Punch",
+        "attack_type": "Crush",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Kick",
+        "attack_type": "Crush",
+        "style": "Aggressive",
+        "experience": ["Strength", "Hitpoints"],
+        "boost": "+3 Strength"
+      },
+      {
+        "stance": "Block",
+        "attack_type": "Crush",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  },
+  "Whip": {
+    "combat_type": "Melee",
+    "styles": [
+      {
+        "stance": "Flick",
+        "attack_type": "Slash",
+        "style": "Accurate",
+        "experience": ["Attack", "Hitpoints"],
+        "boost": "+3 Attack"
+      },
+      {
+        "stance": "Lash",
+        "attack_type": "Slash",
+        "style": "Controlled",
+        "experience": ["Attack", "Strength", "Defence", "Hitpoints"],
+        "boost": "+1 Attack, Strength, Defence"
+      },
+      {
+        "stance": "Deflect",
+        "attack_type": "Slash",
+        "style": "Defensive",
+        "experience": ["Defence", "Hitpoints"],
+        "boost": "+3 Defence"
+      }
+    ]
+  }
+}

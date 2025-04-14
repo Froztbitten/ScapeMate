@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "osrs-companion-app"
+  },
+  "targets": {
+    "osrs-companion-app": {
+      "hosting": [
+        "frontend"
+      ]
+    }
+  },
+  "etags": {}
+}

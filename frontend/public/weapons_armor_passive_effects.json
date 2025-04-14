@@ -1,0 +1,480 @@
+{
+  "items": [
+    {
+      "name": "Slayer Helm",
+      "effect": "Boosts Melee attack and damage against monsters assigned as a Slayer task.",
+      "details": {
+        "melee_accuracy_boost_percent": 16.67,
+        "melee_damage_boost_percent": 16.67,
+        "target_type": "Current Slayer Task"
+      }
+    },
+    {
+      "name": "Slayer Helm (i)",
+      "effect": "Boosts Melee, Ranged, and Magic accuracy and damage against monsters assigned as a Slayer task.",
+      "details": {
+        "melee_accuracy_boost_percent": 16.67,
+        "melee_damage_boost_percent": 16.67,
+        "ranged_accuracy_boost_percent": 15,
+        "ranged_damage_boost_percent": 15,
+        "magic_accuracy_boost_percent": 15,
+        "magic_damage_boost_percent": 15,
+        "target_type": "Current Slayer Task"
+      }
+    },
+    {
+      "name": "Salve Amulet",
+      "effect": "Boosts Melee accuracy and Strength against undead monsters.",
+      "details": {
+        "melee_accuracy_boost_percent": 16.67,
+        "melee_damage_boost_percent": 16.67,
+        "target_type": "Undead"
+      }
+    },
+    {
+      "name": "Salve Amulet (e)",
+      "effect": "Boosts Melee, Ranged, and Magic accuracy and damage against undead monsters.",
+      "details": {
+        "melee_accuracy_boost_percent": 20,
+        "melee_damage_boost_percent": 20,
+        "target_type": "Undead"
+      }
+    },
+    {
+      "name": "Salve Amulet (i)",
+      "effect": "Boosts Melee, Ranged, and Magic accuracy and damage against undead monsters.",
+      "details": {
+        "melee_accuracy_boost_percent": 16.67,
+        "melee_damage_boost_percent": 16.67,
+        "ranged_accuracy_boost_percent": 16.67,
+        "ranged_damage_boost_percent": 16.67,
+        "magic_accuracy_boost_percent": 15,
+        "magic_damage_boost_percent": 15,
+        "target_type": "Undead"
+      }
+    },
+    {
+      "name": "Salve Amulet (ei)",
+      "effect": "Boosts Melee, Ranged, and Magic accuracy and damage against undead monsters.",
+      "details": {
+        "melee_accuracy_boost_percent": 20,
+        "melee_damage_boost_percent": 20,
+        "ranged_accuracy_boost_percent": 20,
+        "ranged_damage_boost_percent": 20,
+        "magic_accuracy_boost_percent": 20,
+        "magic_damage_boost_percent": 20,
+        "target_type": "Undead"
+      }
+    },
+    {
+      "name": "Void Knight Equipment (Melee Set)",
+      "effect": "Boosts Melee accuracy and damage when the full set (helm, top, bottom, gloves) is worn.",
+      "details": {
+        "accuracy_boost_percent": 10,
+        "damage_boost_percent": 10,
+        "set_bonus_requirement": "Void melee helm, top, robe, gloves"
+      }
+    },
+    {
+      "name": "Void Knight Equipment (Ranged Set)",
+      "effect": "Boosts Ranged accuracy and damage when the full set (helm, top, bottom, gloves) is worn.",
+      "details": {
+        "accuracy_boost_percent": 10,
+        "damage_boost_percent": 10,
+        "set_bonus_requirement": "Void ranger helm, top, robe, gloves"
+      }
+    },
+    {
+      "name": "Void Knight Equipment (Magic Set)",
+      "effect": "Boosts Magic accuracy when the full set (helm, top, bottom, gloves) is worn.",
+      "details": {
+        "accuracy_boost_percent": 45,
+        "damage_boost_percent": 0,
+        "set_bonus_requirement": "Void mage helm, top, robe, gloves"
+      }
+    },
+    {
+      "name": "Void Knight Equipment (Elite Set - Melee/Ranged)",
+      "effect": "Boosts Melee/Ranged accuracy and damage when the full set (helm, elite top, elite bottom, gloves) is worn. Ranged set also gains additional damage.",
+      "details": {
+        "melee_accuracy_boost_percent": 10,
+        "melee_damage_boost_percent": 10,
+        "ranged_accuracy_boost_percent": 10,
+        "ranged_damage_boost_percent": 12.5,
+        "set_bonus_requirement": "Matching Void helm, elite top, elite robe, gloves"
+      }
+    },
+    {
+      "name": "Crystal Armour Set (Helm, Body, Legs)",
+      "effect": "Each piece boosts accuracy and damage when using a Crystal bow or Crystal weaponry (e.g., Blade of Saeldor). Effect stacks per piece and provides a larger set bonus.",
+      "details": {
+        "accuracy_boost_per_piece_percent": 5,
+        "damage_boost_per_piece_percent": 2.5,
+        "set_bonus_accuracy_percent": 10,
+        "set_bonus_damage_percent": 5,
+        "total_set_accuracy_percent": 25, /* 3*5 + 10 */
+        "total_set_damage_percent": 12.5, /* 3*2.5 + 5 */
+        "weapon_requirement": "Crystal bow or Blade of Saeldor/Bow of Faerdhinen"
+      }
+    },
+    {
+      "name": "Obsidian Armour Set (Helm, Platebody, Platelegs)",
+      "effect": "Boosts Melee accuracy and damage for Obsidian weapons when the full set is worn.",
+      "details": {
+        "accuracy_boost_percent": 10,
+        "damage_boost_percent": 10,
+        "set_bonus_requirement": "Obsidian helm, platebody, platelegs",
+        "weapon_requirement": "Obsidian weapons (exc. volatile/eldritch staves)"
+      }
+    },
+    {
+      "name": "Amulet of the Damned",
+      "effect": "Enhances the passive set effects of Barrows armour sets when worn alongside a full set.",
+      "details": {
+        "notes": "Effect enhancement varies per Barrows set (e.g., Dharok's damage increase, Guthan's heal chance/amount, Karil's second hit chance, Torag's defence drain, Verac's prayer bonus, Ahrim's strength drain)."
+      }
+    },
+    {
+      "name": "Dharok's Set (Amulet of the Damned worn)",
+      "effect": "Increases max hit based on missing Hitpoints. Amulet adds chance for recoil damage when HP is low.",
+      "details": {
+        "set_bonus_requirement": "Dharok's helm, platebody, platelegs, greataxe",
+        "notes": "Damage scales linearly from normal at full HP up to double damage at 1 HP. Amulet: 25% chance to recoil 15% of damage dealt if HP below 40%."
+      }
+    },
+    {
+      "name": "Guthan's Set (Amulet of the Damned worn)",
+      "effect": "Provides a chance to heal Hitpoints equal to the damage dealt on a successful hit. Amulet increases max heal beyond max HP.",
+      "details": {
+        "chance_percent": 25,
+        "set_bonus_requirement": "Guthan's helm, platebody, chainskirt, warspear",
+        "notes": "Amulet allows healing up to 10 HP above max."
+      }
+    },
+    {
+      "name": "Karil's Set (Amulet of the Damned worn)",
+      "effect": "Provides a chance for ranged attacks to reduce the target's Agility level. Amulet adds chance for a second, lower-damage hit.",
+      "details": {
+        "agility_drain_chance_percent": 25,
+        "agility_drain_amount": "20% of target's current Agility",
+        "second_hit_chance_percent_with_amulet": 25,
+        "second_hit_damage_percent": 50,
+        "set_bonus_requirement": "Karil's coif, leathertop, leatherskirt, crossbow"
+      }
+    },
+    {
+      "name": "Torag's Set (Amulet of the Damned worn)",
+      "effect": "Provides a chance for melee attacks to reduce the target's run energy. Amulet adds chance to also lower Defence.",
+      "details": {
+        "run_drain_chance_percent": 25,
+        "run_drain_amount_percent": 20,
+        "defence_drain_chance_percent_with_amulet": 25,
+        "defence_drain_amount": 1,
+        "set_bonus_requirement": "Torag's helm, platebody, platelegs, hammers"
+      }
+    },
+    {
+      "name": "Verac's Set (Amulet of the Damned worn)",
+      "effect": "Provides a chance for melee attacks to ignore Defence and Prayer protection. Amulet adds Prayer bonus.",
+      "details": {
+        "hit_through_defence_chance_percent": 25,
+        "prayer_bonus_with_amulet": 7,
+        "set_bonus_requirement": "Verac's helm, brassard, plateskirt, flail"
+      }
+    },
+    {
+      "name": "Ahrim's Set (Amulet of the Damned worn)",
+      "effect": "Provides a chance for magic attacks to reduce the target's Strength level. Amulet adds chance for the spell to deal increased damage.",
+      "details": {
+        "strength_drain_chance_percent": 25,
+        "strength_drain_amount": 5,
+        "damage_boost_chance_percent_with_amulet": 25,
+        "damage_boost_percent": 30,
+        "set_bonus_requirement": "Ahrim's hood, robetop, robeskirt, staff"
+      }
+    },
+    {
+      "name": "Staff of the Dead",
+      "effect": "Has a chance to save runes when casting combat spells (excluding built-in Magic Dart).",
+      "details": {
+        "chance_percent": 14.28, /* 1/7 */
+        "notes": "Also provides +15% Melee damage bonus."
+      }
+    },
+    {
+      "name": "Toxic Staff of the Dead",
+      "effect": "Has a chance to save runes when casting combat spells (excluding built-in Magic Dart).",
+      "details": {
+        "chance_percent": 14.28, /* 1/7 */
+        "notes": "Also provides +15% Melee damage bonus."
+      }
+    },
+    {
+      "name": "Serpentine Helm",
+      "effect": "Has a chance to inflict venom on targets when attacking with Melee.",
+      "details": {
+        "chance_percent": 16.67, /* 1/6 */
+        "notes": "Also provides immunity to poison and venom."
+      }
+    },
+    {
+      "name": "Toxic Blowpipe",
+      "effect": "Uses darts as ammo with rapid attack speed. Has a chance to inflict venom. Damage scales with dart tier and Ranged Strength bonus.",
+      "details": {
+        "venom_chance_percent": 25, /* When charged with scales */
+        "notes": "Consumes Zulrah's scales per shot."
+      }
+    },
+    {
+      "name": "Trident of the Seas",
+      "effect": "Casts its own built-in magic spell consuming charges and runes. Swamp version has a chance to inflict venom.",
+      "details": {
+        "seas_venom_chance_percent": 0,
+        "swamp_venom_chance_percent": 25,
+        "notes": "Consumes charges per cast. Requires Magic level (75 for Seas, 78 for Swamp)."
+      }
+    },
+    {
+      "name": "Trident of the Swamp",
+      "effect": "Casts its own built-in magic spell consuming charges and runes. Swamp version has a chance to inflict venom.",
+      "details": {
+        "seas_venom_chance_percent": 0,
+        "swamp_venom_chance_percent": 25,
+        "notes": "Consumes charges per cast. Requires Magic level (75 for Seas, 78 for Swamp)."
+      }
+    },
+    {
+      "name": "Sanguinesti Staff",
+      "effect": "Casts its own built-in magic spell. Has a chance to heal the wielder on a successful hit.",
+      "details": {
+        "heal_chance_percent": 16.67, /* 1/6 */
+        "heal_amount_percent_of_damage": 50,
+        "notes": "Consumes charges and blood runes per cast."
+      }
+    },
+    {
+      "name": "Scythe of Vitur",
+      "effect": "Hits up to three times on large monsters (2x2 or larger) or once on smaller monsters, consuming charges per swing.",
+      "details": {
+        "max_hits": 3,
+        "hit_damage_percent": [
+          100,
+          50,
+          25
+        ], /* Percent of max hit for 1st, 2nd, 3rd splat */
+        "notes": "Consumes charges and blood runes per swing."
+      }
+    },
+    {
+      "name": "Tumeken's Shadow",
+      "effect": "Significantly boosts Magic accuracy and damage based on gear bonuses (capped). Triples accuracy roll. Uses its own spell.",
+      "details": {
+        "default": {
+          "accuracy_multiplier_on_gear_bonus": 3,
+          "damage_multiplier_on_gear_bonus": 3
+        },
+        "toa": {
+          "accuracy_multiplier_on_gear_bonus": 4,
+          "damage_multiplier_on_gear_bonus": 4
+        },
+        "bonus_cap_percent": 100,
+        "notes": "Effect applies outside PvP. Consumes charges and runes."
+      }
+    },
+    {
+      "name": "Osmumten's Fang",
+      "effect": "Features two accuracy rolls, taking the better result. Damage calculation uses a unique formula, effective against high-defence monsters.",
+      "details": {
+        "accuracy_rolls": 2,
+        "notes": "Less effective against very low defence monsters due to damage formula."
+      }
+    },
+    {
+      "name": "Ava's Accumulator / Ava's Assembler",
+      "effect": "Automatically recovers most Ranged ammunition after firing. Assembler provides higher recovery chance and Ranged Strength.",
+      "details": {
+        "accumulator_recovery_chance_percent": 72,
+        "assembler_recovery_chance_percent": 80,
+        "notes": "Does not work with chinchompas or thrown items. Assembler gives +2 Ranged Strength."
+      }
+    },
+    {
+      "name": "Masori Armor (f) Set (Helm, Body, Legs)",
+      "effect": "Each piece provides Ranged Accuracy, Ranged Strength, and Prayer bonus. Fortified version adds significant Defence bonuses. Set effect with Assembler increases Ranged Accuracy and Damage. Has ammo-saving chance.",
+      "details": {
+        "ranged_accuracy_per_piece": "+12/+20/+16", /* Helm/Body/Legs */
+        "ranged_strength_per_piece_percent": "2/4/3", /* Helm/Body/Legs */
+        "ammo_save_chance_total_set_percent": 10, /* Approximation, depends on Ava's device used */
+        "set_bonus_with_assembler_accuracy_percent": 10,
+        "set_bonus_with_assembler_damage_percent": 3,
+        "set_bonus_requirement": "Masori helm (f), Masori body (f), Masori chaps (f), Ava's Assembler"
+      }
+    },
+    {
+      "name": "Torva Armour Set (Helm, Body, Legs)",
+      "effect": "Each piece provides high Strength bonus. Set effect increases Max Hit based on missing Prayer points when praying.",
+      "details": {
+        "strength_bonus_total": 14, /* +4/+6/+4 */
+        "max_hit_increase_per_missing_prayer_point_percent": 0.5,
+        "max_hit_increase_cap_percent": 8,
+        "set_bonus_requirement": "Torva full helm, Torva platebody, Torva platelegs",
+        "notes": "Set effect only active while a protection prayer is active."
+      }
+    },
+    {
+      "name": "Virtus Robes Set (Mask, Top, Bottom)",
+      "effect": "Each piece provides passive Magic Damage bonus. Set effect increases damage of Ancient Magicks spells by 10% and has a chance to save runes when casting them.",
+      "details": {
+        "magic_damage_per_piece_percent": 4, /* Mask/Top/Bottom */
+        "total_magic_damage_percent": 12,
+        "ancient_magicks_damage_boost_percent": 10,
+        "ancient_magicks_rune_save_chance_percent": 15,
+        "set_bonus_requirement": "Virtus mask, Virtus robetop, Virtus robe bottom"
+      }
+    },
+    {
+      "name": "Elysian Spirit Shield",
+      "effect": "Has a chance to reduce incoming damage.",
+      "details": {
+        "chance_percent": 70,
+        "damage_reduction_percent": 25
+      }
+    },
+    {
+      "name": "Spectral Spirit Shield",
+      "effect": "Reduces opponent's Magic accuracy and damage slightly, and reduces prayer drain by 50% when hit by magic attacks (PvM only).",
+      "details": {
+        "notes": "Prayer drain reduction does not work in PvP."
+      }
+    },
+    {
+      "name": "Justiciar Armour Set (Helm, Body, Legs)",
+      "effect": "Provides significant damage reduction based on your defence bonuses against respective styles.",
+      "details": {
+        "damage_reduction_formula": "Complex, based on Defence bonus against attack style.",
+        "set_bonus_requirement": "Justiciar faceguard, Justiciar chestguard, Justiciar legguards",
+        "notes": "Reduction calculation: (DefenceBonus / 3000) * StyleDamageReduction%. Check Wiki for full formula."
+      }
+    },
+    {
+      "name": "Inquisitor's Armour Set (Helm, Body, Legs)",
+      "effect": "Each piece boosts Melee accuracy and damage when using the Crush attack style. Set bonus further increases Crush accuracy and damage.",
+      "details": {
+        "accuracy_boost_per_piece_percent": 0.5,
+        "damage_boost_per_piece_percent": 0.5,
+        "set_bonus_accuracy_percent": 1,
+        "set_bonus_damage_percent": 1,
+        "total_set_accuracy_percent": 2.5,
+        "total_set_damage_percent": 2.5,
+        "attack_style_requirement": "Crush",
+        "set_bonus_requirement": "Inquisitor's great helm, Inquisitor's hauberk, Inquisitor's plateskirt"
+      }
+    },
+    {
+      "name": "Inquisitor's Mace",
+      "effect": "Boosts Melee accuracy and damage when using the Crush attack style.",
+      "details": {
+        "accuracy_boost_percent": 0.5,
+        "damage_boost_percent": 2.0,
+        "attack_style_requirement": "Crush"
+      }
+    },
+    {
+      "name": "Arclight",
+      "effect": "Provides a significant accuracy and damage boost against demonic creatures.",
+      "details": {
+        "accuracy_boost_percent": 70,
+        "damage_boost_percent": 70,
+        "target_type": "Demons"
+      }
+    },
+    {
+      "name": "Dragon Hunter Crossbow",
+      "effect": "Provides a significant accuracy and damage boost against dragons (excluding Revenant dragons).",
+      "details": {
+        "accuracy_boost_percent": 30,
+        "damage_boost_percent": 30,
+        "target_type": "Dragons"
+      }
+    },
+    {
+      "name": "Dragon Hunter Lance",
+      "effect": "Provides a significant accuracy and damage boost against dragons (excluding Revenant dragons).",
+      "details": {
+        "accuracy_boost_percent": 20,
+        "damage_boost_percent": 20,
+        "target_type": "Dragons"
+      }
+    },
+    {
+      "name": "Keris Partisan",
+      "effect": "Provides a damage boost against Kalphites and Scyllids.",
+      "details": {
+        "damage_boost_percent": 33,
+        "target_type": "Kalphites, Scyllids",
+        "notes": "Has a 1/51 chance to deal triple damage."
+      }
+    },
+    {
+      "name": "Keris Partisan of Corruption",
+      "effect": "Same as base Keris Partisan, plus applies poison starting at 6 damage.",
+      "details": {
+        "damage_boost_percent": 33,
+        "target_type": "Kalphites, Scyllids",
+        "notes": "Has a 1/51 chance to deal triple damage. Applies poison.",
+        "poison_start_damage": 6
+      }
+    },
+    {
+      "name": "Keris Partisan of Sundering",
+      "effect": "Same as base Keris Partisan, plus successful hits reduce target's Defence by 10% of damage dealt against Kalphites.",
+      "details": {
+        "damage_boost_percent": 33,
+        "target_type": "Kalphites, Scyllids",
+        "notes": "Has a 1/51 chance to deal triple damage. Reduces defence of Kalphites.",
+        "defence_reduction_percent_of_damage": 10
+      }
+    },
+    {
+      "name": "Keris Partisan of Breaching",
+      "effect": "Same as base Keris Partisan, plus has a chance to ignore 30% of the target's Stab defence.",
+      "details": {
+        "damage_boost_percent": 33,
+        "target_type": "Kalphites, Scyllids",
+        "notes": "Has a 1/51 chance to deal triple damage.",
+        "defence_ignore_chance_percent": 25,
+        "defence_ignored_percent": 30
+      }
+    },
+    {
+      "name": "Holy Wrench / Ring of the Gods (i)",
+      "effect": "Increases the amount of Prayer points restored when drinking Prayer-restoring potions.",
+      "details": {
+        "notes": "Effect amount depends on Prayer level. Ring of the Gods (i) requires imbue."
+      }
+    },
+    {
+      "name": "Ring of Suffering (i)",
+      "effect": "Passively applies the effect of a Ring of Recoil (reflecting 10% of damage taken, min 1) without consuming charges. Also provides Prayer and Defence bonuses.",
+      "details": {
+        "notes": "Requires imbue."
+      }
+    },
+    {
+      "name": "Imbued God Capes (Guthix, Saradomin, Zamorak)",
+      "effect": "Provides increased Magic Damage bonus.",
+      "details": {
+        "magic_damage_percent": 2
+      }
+    },
+    {
+      "name": "Graceful Outfit Set",
+      "effect": "Reduces weight significantly. Restores run energy 30% faster while idle or walking when the full set is worn.",
+      "details": {
+        "weight_reduction_kg": 25,
+        "run_restore_boost_percent": 30,
+        "set_bonus_requirement": "Full Graceful set (hood, top, legs, gloves, boots, cape)"
+      }
+    }
+  ]
+}

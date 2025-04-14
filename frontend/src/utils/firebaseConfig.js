@@ -3,8 +3,6 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getDatabase } from 'firebase/database'
 import { getAnalytics } from 'firebase/analytics'
 
-export { auth, provider, database, analytics }
-
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_REACT_APP_API_KEY,
   authDomain: import.meta.env.VITE_REACT_APP_AUTH_DOMAIN,
@@ -20,3 +18,5 @@ const auth = getAuth(app)
 const database = getDatabase(app)
 const analytics = getAnalytics(app)
 const provider = new GoogleAuthProvider()
+
+export { auth, provider, database, analytics }

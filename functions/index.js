@@ -7,13 +7,33 @@ const app = express()
 
 // --- Middleware ---
 
-app.use(cors({ origin: 'https://scapemate.net' }))
+// Determine the origin based on environment
+const allowedOrigins =
+  process.env.NODE_ENV === 'development'
+    ? [
+        'http://192.168.1.180:5173',
+        'http://localhost:5173',
+      ]
+    : ['https://scapemate.net']
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // --- API Routes ---
 
 app.get('/api/osrs-hiscores', async (req, res) => {
+
   const playerName = req.query.player
 
   if (!playerName) {

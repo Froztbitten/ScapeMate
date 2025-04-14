@@ -25,9 +25,6 @@ import theme from './theme/index'
 type TabValue = 'dpsCalculator' | 'equipmentSearch' | 'map'
 
 function App() {
-  const apiUrl = import.meta.env.REACT_APP_API_URL
-  console.log('API URL:', apiUrl)
-
   const [activeTab, setActiveTab] = useState<TabValue>('dpsCalculator')
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 

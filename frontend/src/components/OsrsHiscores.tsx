@@ -113,7 +113,8 @@ function OsrsHiscores() {
     setError(null)
     setHiscoresData(null) // Clear previous results
 
-    const backendApiUrl = `https://api-zwkgmxtwca-uc.a.run.app/api/osrs-hiscores?player=${encodeURIComponent(
+
+    const backendApiUrl = import.meta.env.VITE_REACT_APP_API_URL + `/api/osrs-hiscores?player=${encodeURIComponent(
       playerName
     )}`
 

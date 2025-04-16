@@ -1,6 +1,4 @@
 export interface EquipmentStats {
-  id: number
-
   stab_attack: number
   slash_attack: number
   crush_attack: number
@@ -20,18 +18,19 @@ export interface EquipmentStats {
   slot: string
 
   speed: number
-  attackrange: number
+  attackrange: number | string
   combatstyle: string
 }
 
 export interface Equipment {
+  id: number
   name: string
+  image_url: string
   stats?: EquipmentStats
 }
 
-// Type for the context state
 export interface ItemDataContextState {
-  allItems: Equipment[]
+  allItems: Record<number, Equipment>
   isLoading: boolean
   error: Error | null
 }

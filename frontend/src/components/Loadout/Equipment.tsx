@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Grid,
+  Paper,
   Container,
   Tooltip,
   Popover,
@@ -28,9 +29,10 @@ type EquipmentSlot =
   | 'ring'
 
 const defaultItem: Equipment = {
+  id: -1,
   name: '',
+  imageUrl: '',
   stats: {
-    id: -1,
     slot: undefined,
   },
 } as unknown as Equipment
@@ -39,6 +41,7 @@ type SelectedItems = Record<EquipmentSlot, Equipment>
 
 interface EquipmentButtonProps {
   itemId: number | undefined
+  imageUrl: string
   label: string
   large?: boolean
   onClick: (event: any, label: string) => void
@@ -46,6 +49,7 @@ interface EquipmentButtonProps {
 
 const EquipmentButton: React.FC<EquipmentButtonProps> = ({
   itemId,
+  imageUrl,
   label,
   onClick,
   large,
@@ -73,11 +77,7 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
         {itemId !== -1 && itemId && (
           <Box
             component='img'
-            src={
-              'https://raw.githubusercontent.com/osrsbox/osrsbox-db/refs/heads/master/docs/items-icons/' +
-              itemId +
-              '.png'
-            }
+            src={imageUrl}
             sx={{
               width: 50,
               height: 50,
@@ -92,6 +92,7 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
 }
 
 const Equipment: React.FC = () => {
+  const items = useItemData()
   const [open, setOpen] = useState(false)
   const [slotFilter, setSlotFilter] = useState<Equipment[]>([])
   const [selectedItems, setSelectedItems] = useState<SelectedItems>({
@@ -111,7 +112,6 @@ const Equipment: React.FC = () => {
   const [activeSlot, setActiveSlot] = useState<EquipmentSlot | null>()
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
-  const items = useItemData()
 
   const handleClearLoadout = () => {
     setSelectedItems({
@@ -141,7 +141,7 @@ const Equipment: React.FC = () => {
         : null
     )
     setSlotFilter(
-      items.allItems.filter(item => {
+      Object.values(items.allItems).filter(item => {
         let labels = [lowerCaseLabel]
         if (lowerCaseLabel === 'weapon') {
           labels.push('2h')
@@ -156,7 +156,7 @@ const Equipment: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false)
-    setSlotFilter(items.allItems)
+    setSlotFilter(Object.values(items.allItems))
     setSelectedItem(null)
   }
 
@@ -166,13 +166,13 @@ const Equipment: React.FC = () => {
       [activeSlot as EquipmentSlot]: value || defaultItem,
     }))
     setSelectedItem(null)
-    setSlotFilter(items.allItems)
+    setSlotFilter(Object.values(items.allItems))
     setOpen(false)
   }
 
   return (
     <Container>
-      <Grid container justifyContent={'center'}>
+      <Grid container justifyContent={'center'} spacing={3}>
         <Grid size={3}>
           <Button variant='contained'>Load</Button>
         </Grid>
@@ -193,22 +193,26 @@ const Equipment: React.FC = () => {
           <Stack spacing={2}>
             <EquipmentButton
               label='Head'
-              itemId={selectedItems.head.stats?.id}
+              itemId={selectedItems.head.id}
+              imageUrl={selectedItems.head.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Body'
-              itemId={selectedItems.body.stats?.id}
+              itemId={selectedItems.body.id}
+              imageUrl={selectedItems.body.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Legs'
-              itemId={selectedItems.legs.stats?.id}
+              itemId={selectedItems.legs.id}
+              imageUrl={selectedItems.legs.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Feet'
-              itemId={selectedItems.feet.stats?.id}
+              itemId={selectedItems.feet.id}
+              imageUrl={selectedItems.feet.image_url}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -216,12 +220,14 @@ const Equipment: React.FC = () => {
             <EquipmentButton
               large
               label='Weapon'
-              itemId={selectedItems.weapon.stats?.id}
+              itemId={selectedItems.weapon.id}
+              imageUrl={selectedItems.weapon.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Spec Wep'
-              itemId={selectedItems['spec wep'].stats?.id}
+              itemId={selectedItems['spec wep'].id}
+              imageUrl={selectedItems['spec wep'].image_url}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -229,34 +235,40 @@ const Equipment: React.FC = () => {
             <EquipmentButton
               large
               label='Shield'
-              itemId={selectedItems.shield.stats?.id}
+              itemId={selectedItems.shield.id}
+              imageUrl={selectedItems.shield.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ammo'
-              itemId={selectedItems.ammo.stats?.id}
+              itemId={selectedItems.ammo.id}
+              imageUrl={selectedItems.ammo.image_url}
               onClick={handleButtonClick}
             />
           </Stack>
           <Stack spacing={2}>
             <EquipmentButton
               label='Cape'
-              itemId={selectedItems.cape.stats?.id}
+              itemId={selectedItems.cape.id}
+              imageUrl={selectedItems.cape.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Hands'
-              itemId={selectedItems.hands.stats?.id}
+              itemId={selectedItems.hands.id}
+              imageUrl={selectedItems.hands.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Neck'
-              itemId={selectedItems.neck.stats?.id}
+              itemId={selectedItems.neck.id}
+              imageUrl={selectedItems.neck.image_url}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ring'
-              itemId={selectedItems.ring.stats?.id}
+              itemId={selectedItems.ring.id}
+              imageUrl={selectedItems.ring.image_url}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -279,7 +291,7 @@ const Equipment: React.FC = () => {
           }}
           value={selectedItem}
           getOptionLabel={(option: Equipment) =>
-            option.name + ' (id:' + option.stats?.id.toString() + ')'
+            option.name + ' (id:' + option.id.toString() + ')'
           }
           renderInput={params => (
             <TextField {...params} placeholder='Start typing' />

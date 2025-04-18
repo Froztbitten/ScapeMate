@@ -1,9 +1,13 @@
-import React, { useState, MouseEvent } from 'react'
+import React, {
+  useState,
+  MouseEvent,
+  useEffect,
+  useContext,
+} from 'react'
 import {
   Box,
   Button,
   Grid,
-  Paper,
   Container,
   Tooltip,
   Popover,
@@ -13,6 +17,9 @@ import {
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
+import { AuthContext } from '@/context/AuthContext' // Import the AuthContext
+import { ref, update, get } from 'firebase/database' // Import Firebase functions
+import { database } from '@/utils/firebaseConfig' // Import Firebase config
 
 type EquipmentSlot =
   | 'head'
@@ -33,7 +40,7 @@ const defaultItem: Equipment = {
   name: '',
   imageUrl: '',
   stats: {
-    slot: undefined,
+    slot: '',
   },
 } as unknown as Equipment
 
@@ -113,8 +120,59 @@ const Equipment: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
 
+  const { user, loading } = useContext(AuthContext)
+
+  const saveLoadoutToFirebase = async (loadout: SelectedItems) => {
+    if (!user) {
+      console.warn('User not logged in. Cannot save loadout.')
+      return
+    }
+    try {
+      const loadoutRef = ref(database, `players/${user.uid}/loadout`) // Use userId as key
+      await update(loadoutRef, loadout)
+      console.log(`Loadout saved to Firebase for user ${user.uid}.`)
+    } catch (err) {
+      console.error('Error saving loadout to Firebase:', err)
+    }
+  }
+
+  const loadLoadoutToFirebase = async (loadout: SelectedItems) => {
+    if (!user) {
+      console.warn('User not logged in. Cannot save loadout.')
+      return
+    }
+    try {
+      const loadoutRef = ref(database, `players/${user.uid}/loadout`) // Use userId as key
+      const snapshot = await get(loadoutRef)
+      if (snapshot.exists()) {
+        const selectedItems = snapshot.val()
+        setSelectedItems(selectedItems)
+      } else {
+        console.log('No player name found for this user.')
+      }
+    } catch (err) {
+      console.error('Error saving loadout to Firebase:', err)
+    }
+  }
+
   const handleClearLoadout = () => {
     setSelectedItems({
+      head: defaultItem,
+      body: defaultItem,
+      legs: defaultItem,
+      feet: defaultItem,
+      weapon: defaultItem,
+      'spec wep': defaultItem,
+      shield: defaultItem,
+      ammo: defaultItem,
+      cape: defaultItem,
+      hands: defaultItem,
+      neck: defaultItem,
+      ring: defaultItem,
+    })
+
+    // Save the cleared loadout to Firebase
+    saveLoadoutToFirebase({
       head: defaultItem,
       body: defaultItem,
       legs: defaultItem,
@@ -161,14 +219,24 @@ const Equipment: React.FC = () => {
   }
 
   const handleSelect = (_event: any, value: Equipment | null) => {
-    setSelectedItems(prevSelectedItems => ({
-      ...prevSelectedItems,
+    const newSelectedItems = {
+      ...selectedItems,
       [activeSlot as EquipmentSlot]: value || defaultItem,
-    }))
+    }
+    setSelectedItems(newSelectedItems)
     setSelectedItem(null)
     setSlotFilter(Object.values(items.allItems))
     setOpen(false)
+
+    // Save the updated loadout to Firebase
+    saveLoadoutToFirebase(newSelectedItems)
   }
+
+  useEffect(() => {
+    if (!loading && user) {
+      loadLoadoutToFirebase(selectedItems)
+    }
+  }, [user, loading])
 
   return (
     <Container>

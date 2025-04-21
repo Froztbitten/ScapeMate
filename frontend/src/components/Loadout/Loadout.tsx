@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Box,
-  Tabs,
-  Tab,
-  Typography,
-} from '@mui/material'
+import { Box, Tabs, Tab, Typography } from '@mui/material'
 import Equipment from '@/components/Loadout/Equipment'
 
 interface TabPanelProps {
@@ -18,12 +13,11 @@ function TabPanel(props: Readonly<TabPanelProps>) {
 
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`loadout-tabpanel-${index}`}
       aria-labelledby={`loadout-tab-${index}`}
-      {...other}
-    >
+      {...other}>
       {value === index && (
         <Box sx={{ p: 1 }}>
           <Typography>{children}</Typography>
@@ -42,7 +36,7 @@ function a11yProps(index: number) {
 
 function Loadout() {
   const [value, setValue] = useState(0)
-  const combatStyleTabs = ['Melee', 'Ranged', 'Magic', 'Spec Atk']
+  const combatStyleTabs = ['Melee', 'Ranged', 'Magic']
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -54,17 +48,21 @@ function Loadout() {
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="loadout tabs"
-          centered
-        >
+          aria-label='loadout tabs'
+          centered>
           {combatStyleTabs.map((tabName, index) => (
-            <Tab key={tabName} label={tabName} {...a11yProps(index)} sx={{ flexGrow: 1 }} />
+            <Tab
+              key={tabName}
+              label={tabName}
+              {...a11yProps(index)}
+              sx={{ flexGrow: 1 }}
+            />
           ))}
         </Tabs>
       </Box>
       {combatStyleTabs.map((tabName, index) => (
         <TabPanel key={`${tabName}-panel`} value={value} index={index}>
-          <Equipment />
+          <Equipment combatStyle={tabName} />
         </TabPanel>
       ))}
     </Box>

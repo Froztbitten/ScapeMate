@@ -3,13 +3,13 @@ import React, {
   MouseEvent,
   useEffect,
   useContext,
+  useMemo,
 } from 'react'
 import {
   Box,
   Button,
   Grid,
   Container,
-  Tooltip,
   Popover,
   TextField,
   Stack,
@@ -17,9 +17,10 @@ import {
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
-import { AuthContext } from '@/context/AuthContext' // Import the AuthContext
-import { ref, update, get } from 'firebase/database' // Import Firebase functions
-import { database } from '@/utils/firebaseConfig' // Import Firebase config
+import { AuthContext } from '@/context/AuthContext'
+import { ref, update, get } from 'firebase/database'
+import { database } from '@/utils/firebaseConfig'
+import EquipmentButton from './EquipmentButton' // Import the component
 
 type EquipmentSlot =
   | 'head'
@@ -35,6 +36,10 @@ type EquipmentSlot =
   | 'neck'
   | 'ring'
 
+interface ItemsData {
+  [key: string]: Equipment
+}
+
 const defaultItem: Equipment = {
   id: -1,
   name: '',
@@ -44,78 +49,51 @@ const defaultItem: Equipment = {
   },
 } as unknown as Equipment
 
+const initialEquipmentState = {
+  head: defaultItem,
+  body: defaultItem,
+  legs: defaultItem,
+  feet: defaultItem,
+  weapon: defaultItem,
+  'spec wep': defaultItem,
+  shield: defaultItem,
+  ammo: defaultItem,
+  cape: defaultItem,
+  hands: defaultItem,
+  neck: defaultItem,
+  ring: defaultItem,
+}
+
 type SelectedItems = Record<EquipmentSlot, Equipment>
 
-interface EquipmentButtonProps {
-  itemId: number | undefined
-  imageUrl: string
-  label: string
-  large?: boolean
-  onClick: (event: any, label: string) => void
+interface EquipmentProps {
+  combatStyle: string
+  initialSelectedItems?: SelectedItems
 }
 
-const EquipmentButton: React.FC<EquipmentButtonProps> = ({
-  itemId,
-  imageUrl,
-  label,
-  onClick,
-  large,
+const filterItemsBySlot = (slot: string, allItems: ItemsData): Equipment[] => {
+  let labels = [slot]
+  if (slot === 'weapon') {
+    labels.push('2h')
+  } else if (slot === 'spec wep') {
+    labels.push('weapon')
+    labels.push('2h')
+  }
+  return Object.values(allItems).filter(item => {
+    return item.stats?.slot ? labels.includes(item.stats.slot) : false
+  })
+}
+
+const Equipment: React.FC<EquipmentProps> = ({
+  combatStyle,
+  initialSelectedItems,
 }) => {
-  return (
-    <Tooltip title={label}>
-      <Button
-        variant='outlined'
-        onClick={() => onClick && onClick(event, label)}
-        sx={{
-          width: '64px',
-          height: large ? '128px' : '64px',
-          position: 'relative',
-          '& .MuiButton-label': {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-        }}>
-        {itemId !== -1 && itemId && (
-          <Box
-            component='img'
-            src={imageUrl}
-            sx={{
-              width: 50,
-              height: 50,
-              display: 'block',
-            }}
-          />
-        )}
-        {itemId === -1 || !itemId ? label : ''}
-      </Button>
-    </Tooltip>
-  )
-}
-
-const Equipment: React.FC = () => {
   const items = useItemData()
   const [open, setOpen] = useState(false)
   const [slotFilter, setSlotFilter] = useState<Equipment[]>([])
-  const [selectedItems, setSelectedItems] = useState<SelectedItems>({
-    head: defaultItem,
-    body: defaultItem,
-    legs: defaultItem,
-    feet: defaultItem,
-    weapon: defaultItem,
-    'spec wep': defaultItem,
-    shield: defaultItem,
-    ammo: defaultItem,
-    cape: defaultItem,
-    hands: defaultItem,
-    neck: defaultItem,
-    ring: defaultItem,
-  })
+  const [selectedItems, setSelectedItems] = useState<SelectedItems>(
+    initialSelectedItems || initialEquipmentState
+  )
   const [activeSlot, setActiveSlot] = useState<EquipmentSlot | null>()
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
@@ -127,26 +105,57 @@ const Equipment: React.FC = () => {
       console.warn('User not logged in. Cannot save loadout.')
       return
     }
+
     try {
-      const loadoutRef = ref(database, `players/${user.uid}/loadout`) // Use userId as key
-      await update(loadoutRef, loadout)
+      const transformedLoadout = Object.entries(loadout).reduce(
+        (acc: Record<EquipmentSlot, number | null>, [slot, item]) => {
+          acc[slot as EquipmentSlot] = item.id != -1 ? item.id : null
+          return acc
+        },
+        {} as Record<EquipmentSlot, number | null>
+      )
+
+      const loadoutRef = ref(
+        database,
+        `players/${user.uid}/loadouts/default/${combatStyle}`
+      )
+      await update(loadoutRef, transformedLoadout)
       console.log(`Loadout saved to Firebase for user ${user.uid}.`)
     } catch (err) {
       console.error('Error saving loadout to Firebase:', err)
     }
   }
 
-  const loadLoadoutToFirebase = async (loadout: SelectedItems) => {
+  const loadLoadoutFromFirebase = async () => {
     if (!user) {
       console.warn('User not logged in. Cannot save loadout.')
       return
     }
+
     try {
-      const loadoutRef = ref(database, `players/${user.uid}/loadout`) // Use userId as key
+      const loadoutRef = ref(
+        database,
+        `players/${user.uid}/loadouts/default/${combatStyle}`
+      )
       const snapshot = await get(loadoutRef)
+
       if (snapshot.exists()) {
-        const selectedItems = snapshot.val()
-        setSelectedItems(selectedItems)
+        const loadedLoadout = snapshot.val()
+        const newSelectedItems: SelectedItems = { ...initialEquipmentState }
+
+        for (const slot in initialEquipmentState) {
+          if (loadedLoadout.hasOwnProperty(slot)) {
+            const itemId = loadedLoadout[slot]
+
+            if (itemId && items.allItems[itemId]) {
+              newSelectedItems[slot as EquipmentSlot] = items.allItems[itemId]
+            } else {
+              newSelectedItems[slot as EquipmentSlot] = defaultItem
+            }
+          }
+        }
+
+        setSelectedItems(newSelectedItems)
       } else {
         console.log('No player name found for this user.')
       }
@@ -155,61 +164,24 @@ const Equipment: React.FC = () => {
     }
   }
 
-  const handleClearLoadout = () => {
-    setSelectedItems({
-      head: defaultItem,
-      body: defaultItem,
-      legs: defaultItem,
-      feet: defaultItem,
-      weapon: defaultItem,
-      'spec wep': defaultItem,
-      shield: defaultItem,
-      ammo: defaultItem,
-      cape: defaultItem,
-      hands: defaultItem,
-      neck: defaultItem,
-      ring: defaultItem,
-    })
+  const resetLoadout = useMemo(() => initialEquipmentState, [])
 
-    // Save the cleared loadout to Firebase
-    saveLoadoutToFirebase({
-      head: defaultItem,
-      body: defaultItem,
-      legs: defaultItem,
-      feet: defaultItem,
-      weapon: defaultItem,
-      'spec wep': defaultItem,
-      shield: defaultItem,
-      ammo: defaultItem,
-      cape: defaultItem,
-      hands: defaultItem,
-      neck: defaultItem,
-      ring: defaultItem,
-    })
+  const handleClearLoadout = () => {
+    setSelectedItems(resetLoadout)
+    saveLoadoutToFirebase(resetLoadout)
   }
 
   const handleButtonClick = (event: MouseEvent, label: string) => {
-    setDialogPosition({ x: event.clientX, y: event.clientY })
-    setOpen(true)
-    const lowerCaseLabel = label.toLowerCase()
-    setActiveSlot(lowerCaseLabel as EquipmentSlot)
+    const lowerCaseLabel = label.toLowerCase() as EquipmentSlot
+    setActiveSlot(lowerCaseLabel)
     setSelectedItem(
-      selectedItems[lowerCaseLabel as EquipmentSlot] !== defaultItem
-        ? selectedItems[lowerCaseLabel as EquipmentSlot]
+      selectedItems[lowerCaseLabel] !== defaultItem
+        ? selectedItems[lowerCaseLabel]
         : null
     )
-    setSlotFilter(
-      Object.values(items.allItems).filter(item => {
-        let labels = [lowerCaseLabel]
-        if (lowerCaseLabel === 'weapon') {
-          labels.push('2h')
-        } else if (lowerCaseLabel === 'spec wep') {
-          labels.push('weapon')
-          labels.push('2h')
-        }
-        return item.stats?.slot ? labels.includes(item.stats.slot) : false
-      })
-    )
+    setSlotFilter(filterItemsBySlot(lowerCaseLabel, items.allItems))
+    setDialogPosition({ x: event.clientX, y: event.clientY })
+    setOpen(true)
   }
 
   const handleClose = () => {
@@ -228,15 +200,14 @@ const Equipment: React.FC = () => {
     setSlotFilter(Object.values(items.allItems))
     setOpen(false)
 
-    // Save the updated loadout to Firebase
     saveLoadoutToFirebase(newSelectedItems)
   }
 
   useEffect(() => {
-    if (!loading && user) {
-      loadLoadoutToFirebase(selectedItems)
+    if (!loading && items && user) {
+      loadLoadoutFromFirebase()
     }
-  }, [user, loading])
+  }, [user, items, loading])
 
   return (
     <Container>
@@ -261,26 +232,22 @@ const Equipment: React.FC = () => {
           <Stack spacing={2}>
             <EquipmentButton
               label='Head'
-              itemId={selectedItems.head.id}
-              imageUrl={selectedItems.head.image_url}
+              selectedItem={selectedItems.head}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Body'
-              itemId={selectedItems.body.id}
-              imageUrl={selectedItems.body.image_url}
+              selectedItem={selectedItems.body}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Legs'
-              itemId={selectedItems.legs.id}
-              imageUrl={selectedItems.legs.image_url}
+              selectedItem={selectedItems.legs}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Feet'
-              itemId={selectedItems.feet.id}
-              imageUrl={selectedItems.feet.image_url}
+              selectedItem={selectedItems.feet}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -288,14 +255,12 @@ const Equipment: React.FC = () => {
             <EquipmentButton
               large
               label='Weapon'
-              itemId={selectedItems.weapon.id}
-              imageUrl={selectedItems.weapon.image_url}
+              selectedItem={selectedItems.weapon}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Spec Wep'
-              itemId={selectedItems['spec wep'].id}
-              imageUrl={selectedItems['spec wep'].image_url}
+              selectedItem={selectedItems['spec wep']}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -303,40 +268,34 @@ const Equipment: React.FC = () => {
             <EquipmentButton
               large
               label='Shield'
-              itemId={selectedItems.shield.id}
-              imageUrl={selectedItems.shield.image_url}
+              selectedItem={selectedItems.shield}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ammo'
-              itemId={selectedItems.ammo.id}
-              imageUrl={selectedItems.ammo.image_url}
+              selectedItem={selectedItems.ammo}
               onClick={handleButtonClick}
             />
           </Stack>
           <Stack spacing={2}>
             <EquipmentButton
               label='Cape'
-              itemId={selectedItems.cape.id}
-              imageUrl={selectedItems.cape.image_url}
+              selectedItem={selectedItems.cape}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Hands'
-              itemId={selectedItems.hands.id}
-              imageUrl={selectedItems.hands.image_url}
+              selectedItem={selectedItems.hands}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Neck'
-              itemId={selectedItems.neck.id}
-              imageUrl={selectedItems.neck.image_url}
+              selectedItem={selectedItems.neck}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ring'
-              itemId={selectedItems.ring.id}
-              imageUrl={selectedItems.ring.image_url}
+              selectedItem={selectedItems.ring}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -357,7 +316,7 @@ const Equipment: React.FC = () => {
           sx={{
             width: 300,
           }}
-          value={selectedItem}
+          value={selectedItem?.id != -1 ? selectedItem : null}
           getOptionLabel={(option: Equipment) =>
             option.name + ' (id:' + option.id.toString() + ')'
           }

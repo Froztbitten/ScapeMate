@@ -8,19 +8,20 @@ import {
   CssBaseline,
   Tooltip,
   Avatar,
+  Paper,
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
-import ProgressionTree from './pages/ProgressionTree.tsx'
-import DpsCalculator from './pages/DpsCalculator.tsx'
-import ItemSearch from './pages/ItemSearch.tsx'
+import ProgressionTree from '@/pages/ProgressionTree.tsx'
+import DpsCalculator from '@/pages/DpsCalculator.tsx'
+import ItemSearch from '@/pages/ItemSearch.tsx'
 import {
   onAuthStateChanged,
   signInWithPopup,
   signOut,
   User,
 } from 'firebase/auth'
-import { auth, provider } from './utils/firebaseConfig'
-import theme from './theme/index'
+import { auth, provider } from '@/utils/firebaseConfig'
+import theme from '@/theme/index'
 
 type TabValue = 'dpsCalculator' | 'equipmentSearch' | 'map'
 
@@ -80,6 +81,8 @@ function App() {
                 sx={{ my: 2, color: 'white', display: 'block' }}>
                 Map
               </Button>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
             </Box>
             <Box
               sx={{

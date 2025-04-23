@@ -1,8 +1,0 @@
-[
-    {
-        "boss": "Abyssal Sire",
-        "infoboxes": [],
-        "fetch_status": "failed",
-        "error": "Unexpected Fetch Error: 'NoneType' object has no attribute 'prettify'"
-    }
-]

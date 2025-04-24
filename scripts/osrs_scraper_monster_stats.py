@@ -8,22 +8,31 @@ PAGE_TITLE = "Zulrah"
 INFOBOX_MONSTER = "Infobox Monster"
 VERSION = "version"
 OUTPUT_FILE = "../frontend/public/monsters_bosses.json"
-FILTERED_BOSS_PROPERTIES = ['Assigned_by','Examine','Experience_bonus','Is_members_only','Is_variant_of',
-                            'Name','Release_date','Slayer_category','Slayer_experience','Uses_infobox',
-                            'Uses_skill','Version_anchor','_ERRC','_SKEY','All_Assigned_by','All_Examine',
-                            'All_Experience_bonus','All_Is_members_only','All_Is_variant_of','Name',
-                            'All_Release_date','All_Slayer_category','All_Slayer_experience','Uses_infobox',
-                            'Uses_skill','Version_anchor','_INST','_MDAT','_SOBJ',"All_Attack_bonus",
-                            "All_Attack_level","All_Attack_speed","All_Attack_style","All_Combat_level",
-                            "All_Crush_defence_bonus","All_Defence_level","All_Heavy_range_defence_bonus",
-                            "All_Hitpoints","All_Image","All_Immune_to_poison","All_Immune_to_venom",
-                            "All_Light_range_defence_bonus","All_Magic_Damage_bonus","All_Magic_attack_bonus",
-                            "All_Magic_defence_bonus","All_Magic_level","All_Max_hit","All_Monster_attribute",
-                            "All_NPC_ID","All_Name","All_Poisonous","All_Range_attack_bonus",
-                            "All_Range_defence_bonus","All_Ranged_Strength_bonus","All_Ranged_level","All_Size",
-                            "All_Slash_defence_bonus","All_Slayer_level","All_Stab_defence_bonus",
-                            "All_Standard_range_defence_bonus","All_Strength_bonus","All_Strength_level",
-                            "All_Uses_infobox","All_Uses_skill"]
+# FILTERED_BOSS_PROPERTIES = ['Assigned_by','Examine','Experience_bonus','Is_members_only','Is_variant_of',
+#                             'Name','Release_date','Slayer_category','Slayer_experience','Uses_infobox',
+#                             'Uses_skill','Version_anchor','_ERRC','_SKEY','All_Assigned_by','All_Examine',
+#                             'All_Experience_bonus','All_Is_members_only','All_Is_variant_of','Name',
+#                             'All_Release_date','All_Slayer_category','All_Slayer_experience','Uses_infobox',
+#                             'Uses_skill','Version_anchor','_INST','_MDAT','_SOBJ',"All_Attack_bonus",
+#                             "All_Attack_level","All_Attack_speed","All_Attack_style","All_Combat_level",
+#                             "All_Crush_defence_bonus","All_Defence_level","All_Heavy_range_defence_bonus",
+#                             "All_Hitpoints","All_Image","All_Immune_to_poison","All_Immune_to_venom",
+#                             "All_Light_range_defence_bonus","All_Magic_Damage_bonus","All_Magic_attack_bonus",
+#                             "All_Magic_defence_bonus","All_Magic_level","All_Max_hit","All_Monster_attribute",
+#                             "All_NPC_ID","All_Name","All_Poisonous","All_Range_attack_bonus",
+#                             "All_Range_defence_bonus","All_Ranged_Strength_bonus","All_Ranged_level","All_Size",
+#                             "All_Slash_defence_bonus","All_Slayer_level","All_Stab_defence_bonus",
+#                             "All_Standard_range_defence_bonus","All_Strength_bonus","All_Strength_level",
+#                             "All_Uses_infobox","All_Uses_skill","_ASK","All_League_Region",
+#                             "All_Elemental_weakness","All_Elemental_weakness_percent","All_Version_anchor"]
+FILTERED_BOSS_PROPERTIES = ['Attack_bonus','Attack_level','Attack_speed','Attack_style','Combat_level',
+                            'Crush_defence_bonus','Defence_level','Elemental_weakness','Elemental_weakness_percent',
+                            'Heavy_range_defence_bonus','Hitpoints','Immune_to_poison','Immune_to_venom',
+                            'Light_range_defence_bonus','Magic_Damage_bonus','Magic_attack_bonus',
+                            'Magic_defence_bonus','Magic_level','Max_hit','Monster_attribute','NPC_ID','Name',
+                            'Poisonous','Range_attack_bonus','Range_defence_bonus','Ranged_Strength_bonus',
+                            'Ranged_level','Size','Slash_defence_bonus','Stab_defence_bonus',
+                            'Standard_range_defence_bonus','Strength_bonus','Strength_level']
 
 def fetch_page_wikitext(page_title):
     params_fetch = {
@@ -106,7 +115,7 @@ def fetch_data_by_subject(subject, subobject):
         
         for item in data_array:
             property_name = item.get("property")
-            if property_name is not None and property_name not in FILTERED_BOSS_PROPERTIES:
+            if property_name is not None and property_name.lower() in FILTERED_BOSS_PROPERTIES.lower():
                 subject_data[property_name] = item.get("dataitem")[0].get("item")
 
     except requests.exceptions.RequestException as e:

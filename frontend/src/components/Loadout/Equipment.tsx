@@ -1,5 +1,5 @@
 import React, { useState, MouseEvent } from 'react'
-import { Box, Button, Grid, Container, Popover, TextField, Stack } from '@mui/material'
+import { Box, Button, Grid, Container, Popover, TextField, Stack, Divider } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
@@ -106,6 +106,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             Clear
           </Button>
         </Grid>
+        
+        <Divider sx={{width: '100%'}}/>
       </Grid>
       <Box sx={{ maxWidth: '350px', paddingY: '20px' }}>
         <Grid container spacing={2} justifyContent={'center'}>

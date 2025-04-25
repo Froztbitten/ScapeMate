@@ -4,7 +4,6 @@ import {
   Button,
   Typography,
   Paper,
-  Divider,
   useMediaQuery,
 } from '@mui/material'
 
@@ -14,6 +13,7 @@ import ChevronRight from '@mui/icons-material/ChevronRight'
 import OsrsHiscores from '@/components/OsrsHiscores.tsx'
 import Loadout from '@/components/Loadout/Loadout.tsx'
 import Monster from '@/components/Monster/Monster.tsx'
+import StatsTable from '@/components/DpsResults/StatsTable'
 
 interface SidePanelProps {
   title: string
@@ -30,7 +30,6 @@ const SidePanel: React.FC<SidePanelProps> = ({
   onToggle,
   side,
 }) => {
-  const isSmallScreen = useMediaQuery((theme: any) => theme.breakpoints.down('md'))
 
   return (
     <Box
@@ -135,13 +134,7 @@ const DataVisualizationLayout: React.FC = () => {
         }}
       >
         <Paper sx={{ p: 2, height: '100%' }}>
-          <Typography variant="h6">Main Content</Typography>
-          <Divider sx={{ my: 1 }} />
-          <Typography>
-            This is the main content area where you can display data
-            visualizations like tables, charts, etc.
-          </Typography>
-          <Typography>The side panels are collapsible.</Typography>
+          <StatsTable/>
         </Paper>
       </Box>
       <SidePanel

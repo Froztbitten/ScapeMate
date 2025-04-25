@@ -4,6 +4,7 @@ import App from '@/App'
 import { AuthProvider } from '@/context/AuthContext'
 import { ItemDataProvider } from '@/context/ItemDataContext'
 import { MonsterDataProvider } from '@/context/MonsterDataContext'
+import { LoadoutProvider } from './context/LoadoutContext'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element') // Type guard
@@ -19,7 +20,9 @@ root.render(
     <AuthProvider>
       <ItemDataProvider>
         <MonsterDataProvider>
-        <App />
+          <LoadoutProvider>
+            <App />
+          </LoadoutProvider>
         </MonsterDataProvider>
       </ItemDataProvider>
     </AuthProvider>

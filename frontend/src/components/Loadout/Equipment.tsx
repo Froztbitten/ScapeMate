@@ -1,4 +1,4 @@
-import React, {
+import React, { 
   useState,
   MouseEvent,
   useEffect,
@@ -10,6 +10,7 @@ import {
   Button,
   Grid,
   Container,
+  Divider,
   Popover,
   TextField,
   Stack,
@@ -17,58 +18,15 @@ import {
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
-import { AuthContext } from '@/context/AuthContext'
-import { ref, update, get } from 'firebase/database'
-import { database } from '@/utils/firebaseConfig'
-import EquipmentButton from './EquipmentButton' // Import the component
-
-type EquipmentSlot =
-  | 'head'
-  | 'body'
-  | 'legs'
-  | 'feet'
-  | 'weapon'
-  | 'spec wep'
-  | 'shield'
-  | 'ammo'
-  | 'cape'
-  | 'hands'
-  | 'neck'
-  | 'ring'
+import EquipmentButton from './EquipmentButton'
+import { useLoadout, SelectedItems, EquipmentSlot, initialEquipmentState, defaultItem } from '@/context/LoadoutContext';
 
 interface ItemsData {
   [key: string]: Equipment
 }
 
-const defaultItem: Equipment = {
-  id: -1,
-  name: '',
-  imageUrl: '',
-  stats: {
-    slot: '',
-  },
-} as unknown as Equipment
-
-const initialEquipmentState = {
-  head: defaultItem,
-  body: defaultItem,
-  legs: defaultItem,
-  feet: defaultItem,
-  weapon: defaultItem,
-  'spec wep': defaultItem,
-  shield: defaultItem,
-  ammo: defaultItem,
-  cape: defaultItem,
-  hands: defaultItem,
-  neck: defaultItem,
-  ring: defaultItem,
-}
-
-type SelectedItems = Record<EquipmentSlot, Equipment>
-
 interface EquipmentProps {
   combatStyle: string
-  initialSelectedItems?: SelectedItems
 }
 
 const filterItemsBySlot = (slot: string, allItems: ItemsData): Equipment[] => {
@@ -85,98 +43,31 @@ const filterItemsBySlot = (slot: string, allItems: ItemsData): Equipment[] => {
 }
 
 const Equipment: React.FC<EquipmentProps> = ({
-  combatStyle,
-  initialSelectedItems,
+  combatStyle
 }) => {
   const items = useItemData()
   const [open, setOpen] = useState(false)
   const [slotFilter, setSlotFilter] = useState<Equipment[]>([])
-  const [selectedItems, setSelectedItems] = useState<SelectedItems>(
-    initialSelectedItems || initialEquipmentState
-  )
   const [activeSlot, setActiveSlot] = useState<EquipmentSlot | null>()
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
 
-  const { user, loading } = useContext(AuthContext)
+  const { selectedItems, setSelectedItems, saveLoadoutToFirebase, resetLoadout} = useLoadout();
 
-  const saveLoadoutToFirebase = async (loadout: SelectedItems) => {
-    if (!user) {
-      console.warn('User not logged in. Cannot save loadout.')
-      return
-    }
+  const combatStyleLower = combatStyle.toLowerCase() as keyof typeof selectedItems;
 
-    try {
-      const transformedLoadout = Object.entries(loadout).reduce(
-        (acc: Record<EquipmentSlot, number | null>, [slot, item]) => {
-          acc[slot as EquipmentSlot] = item.id != -1 ? item.id : null
-          return acc
-        },
-        {} as Record<EquipmentSlot, number | null>
-      )
-
-      const loadoutRef = ref(
-        database,
-        `players/${user.uid}/loadouts/default/${combatStyle}`
-      )
-      await update(loadoutRef, transformedLoadout)
-      console.log(`Loadout saved to Firebase for user ${user.uid}.`)
-    } catch (err) {
-      console.error('Error saving loadout to Firebase:', err)
-    }
-  }
-
-  const loadLoadoutFromFirebase = async () => {
-    if (!user) {
-      console.warn('User not logged in. Cannot save loadout.')
-      return
-    }
-
-    try {
-      const loadoutRef = ref(
-        database,
-        `players/${user.uid}/loadouts/default/${combatStyle}`
-      )
-      const snapshot = await get(loadoutRef)
-
-      if (snapshot.exists()) {
-        const loadedLoadout = snapshot.val()
-        const newSelectedItems: SelectedItems = { ...initialEquipmentState }
-
-        for (const slot in initialEquipmentState) {
-          if (loadedLoadout.hasOwnProperty(slot)) {
-            const itemId = loadedLoadout[slot]
-
-            if (itemId && items.allItems[itemId]) {
-              newSelectedItems[slot as EquipmentSlot] = items.allItems[itemId]
-            } else {
-              newSelectedItems[slot as EquipmentSlot] = defaultItem
-            }
-          }
-        }
-
-        setSelectedItems(newSelectedItems)
-      } else {
-        console.log('No player name found for this user.')
-      }
-    } catch (err) {
-      console.error('Error saving loadout to Firebase:', err)
-    }
-  }
-
-  const resetLoadout = useMemo(() => initialEquipmentState, [])
+  const currentSelectedItems: SelectedItems = selectedItems[combatStyleLower] || initialEquipmentState;
 
   const handleClearLoadout = () => {
-    setSelectedItems(resetLoadout)
-    saveLoadoutToFirebase(resetLoadout)
+    resetLoadout();
   }
 
   const handleButtonClick = (event: MouseEvent, label: string) => {
     const lowerCaseLabel = label.toLowerCase() as EquipmentSlot
     setActiveSlot(lowerCaseLabel)
     setSelectedItem(
-      selectedItems[lowerCaseLabel] !== defaultItem
-        ? selectedItems[lowerCaseLabel]
+      currentSelectedItems[lowerCaseLabel] !== defaultItem
+        ? currentSelectedItems[lowerCaseLabel]
         : null
     )
     setSlotFilter(filterItemsBySlot(lowerCaseLabel, items.allItems))
@@ -191,63 +82,57 @@ const Equipment: React.FC<EquipmentProps> = ({
   }
 
   const handleSelect = (_event: any, value: Equipment | null) => {
-    const newSelectedItems = {
-      ...selectedItems,
-      [activeSlot as EquipmentSlot]: value || defaultItem,
-    }
+    const newSelectedItems = { ...selectedItems }
+    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] = value || defaultItem
     setSelectedItems(newSelectedItems)
     setSelectedItem(null)
     setSlotFilter(Object.values(items.allItems))
     setOpen(false)
 
-    saveLoadoutToFirebase(newSelectedItems)
+    saveLoadoutToFirebase(newSelectedItems[combatStyleLower], combatStyle)
   }
-
-  useEffect(() => {
-    if (!loading && items && user) {
-      loadLoadoutFromFirebase()
-    }
-  }, [user, items, loading])
 
   return (
     <Container>
-      <Grid container justifyContent={'center'} spacing={3}>
+      <Grid container justifyContent={'center'} spacing={2} sx={{paddingBottom: '10px'}}>
         <Grid size={3}>
-          <Button variant='contained'>Load</Button>
+          <Button variant='contained' disabled>Load</Button>
         </Grid>
         <Grid size={3}>
-          <Button variant='contained'>Opti</Button>
+          <Button variant='contained' disabled>Opti</Button>
         </Grid>
         <Grid size={3}>
-          <Button variant='contained'>Save</Button>
+          <Button variant='contained' disabled>Save</Button>
         </Grid>
         <Grid size={3}>
           <Button variant='contained' onClick={handleClearLoadout}>
             Clear
           </Button>
         </Grid>
+        
+        <Divider sx={{width: '100%'}}/>
       </Grid>
       <Box sx={{ maxWidth: '350px', paddingY: '20px' }}>
         <Grid container spacing={2} justifyContent={'center'}>
           <Stack spacing={2}>
             <EquipmentButton
               label='Head'
-              selectedItem={selectedItems.head}
+              selectedItem={currentSelectedItems.head}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Body'
-              selectedItem={selectedItems.body}
+              selectedItem={currentSelectedItems.body}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Legs'
-              selectedItem={selectedItems.legs}
+              selectedItem={currentSelectedItems.legs}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Feet'
-              selectedItem={selectedItems.feet}
+              selectedItem={currentSelectedItems.feet}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -255,12 +140,12 @@ const Equipment: React.FC<EquipmentProps> = ({
             <EquipmentButton
               large
               label='Weapon'
-              selectedItem={selectedItems.weapon}
+              selectedItem={currentSelectedItems.weapon}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Spec Wep'
-              selectedItem={selectedItems['spec wep']}
+              selectedItem={currentSelectedItems['spec wep']}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -268,34 +153,34 @@ const Equipment: React.FC<EquipmentProps> = ({
             <EquipmentButton
               large
               label='Shield'
-              selectedItem={selectedItems.shield}
+              selectedItem={currentSelectedItems.shield}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ammo'
-              selectedItem={selectedItems.ammo}
+              selectedItem={currentSelectedItems.ammo}
               onClick={handleButtonClick}
             />
           </Stack>
           <Stack spacing={2}>
             <EquipmentButton
               label='Cape'
-              selectedItem={selectedItems.cape}
+              selectedItem={currentSelectedItems.cape}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Hands'
-              selectedItem={selectedItems.hands}
+              selectedItem={currentSelectedItems.hands}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Neck'
-              selectedItem={selectedItems.neck}
+              selectedItem={currentSelectedItems.neck}
               onClick={handleButtonClick}
             />
             <EquipmentButton
               label='Ring'
-              selectedItem={selectedItems.ring}
+              selectedItem={currentSelectedItems.ring}
               onClick={handleButtonClick}
             />
           </Stack>
@@ -325,7 +210,6 @@ const Equipment: React.FC<EquipmentProps> = ({
           )}
         />
       </Popover>
-      {<p>Selected Head Item: {selectedItems['spec wep'].name}</p>}
     </Container>
   )
 }

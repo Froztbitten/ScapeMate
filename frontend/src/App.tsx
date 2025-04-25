@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useMemo, useState } from 'react'
 import {
   AppBar,
   Toolbar,
@@ -8,7 +8,6 @@ import {
   CssBaseline,
   Tooltip,
   Avatar,
-  Paper,
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import ProgressionTree from '@/pages/ProgressionTree.tsx'
@@ -21,13 +20,15 @@ import {
   User,
 } from 'firebase/auth'
 import { auth, provider } from '@/utils/firebaseConfig'
-import theme from '@/theme/index'
+import { getThemeByName, palettes } from '@/theme/index.js'
+import ThemeSwitcher from '@/theme/ThemeSwitcher'
 
 type TabValue = 'dpsCalculator' | 'equipmentSearch' | 'map'
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabValue>('dpsCalculator')
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [themeName, setThemeName] = useState('Navigation Calculator')
 
   const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue)
@@ -51,6 +52,12 @@ function App() {
     }
   }
 
+  const activeTheme = useMemo(() => getThemeByName(themeName), [themeName])
+
+  const handleThemeChange = (newThemeName: SetStateAction<string>) => {
+    setThemeName(newThemeName)
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user)
@@ -60,7 +67,7 @@ function App() {
   }, [])
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={activeTheme}>
       <CssBaseline />
       <Container>
         <AppBar position='sticky'>
@@ -82,7 +89,13 @@ function App() {
                 Map
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}></Box>
+            <Box>
+              <ThemeSwitcher
+                currentThemeName={themeName}
+                availableThemes={Object.keys(palettes)}
+                onThemeChange={handleThemeChange}
+              />
             </Box>
             <Box
               sx={{

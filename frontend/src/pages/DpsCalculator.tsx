@@ -13,6 +13,7 @@ import ChevronRight from '@mui/icons-material/ChevronRight'
 
 import OsrsHiscores from '@/components/OsrsHiscores.tsx'
 import Loadout from '@/components/Loadout/Loadout.tsx'
+import Monster from '@/components/Monster/Monster.tsx'
 
 interface SidePanelProps {
   title: string
@@ -141,20 +142,16 @@ const DataVisualizationLayout: React.FC = () => {
             visualizations like tables, charts, etc.
           </Typography>
           <Typography>The side panels are collapsible.</Typography>
-          {/* Add content for the main area here */}
         </Paper>
       </Box>
       <SidePanel
-        title="Right Panel"
+        title="Monsters"
         open={rightPanelOpen}
         onToggle={() => setRightPanelOpen(!rightPanelOpen)}
         side="right"
         content={
           <Box>
-            <Typography>Right Panel Content</Typography>
-            <Divider sx={{ my: 1 }} />
-            <Typography>More to come!</Typography>
-            {/* Add content for the right panel here */}
+            <Monster/>
           </Box>
         }
       />

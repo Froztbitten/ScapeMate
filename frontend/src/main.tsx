@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App'
+import { AuthProvider } from '@/context/AuthContext'
 import { ItemDataProvider } from '@/context/ItemDataContext'
-import { AuthProvider } from './context/AuthContext'
+import { MonsterDataProvider } from '@/context/MonsterDataContext'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element') // Type guard
@@ -17,7 +18,9 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <ItemDataProvider>
+        <MonsterDataProvider>
         <App />
+        </MonsterDataProvider>
       </ItemDataProvider>
     </AuthProvider>
   </React.StrictMode>

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Box, TextField, Typography, Paper } from '@mui/material'
-import HitChance from '@/DpsCalculator/HitChance'
+import HitChance from '@//components/DpsCalculator/HitChance'
 import MaxHitCalculator from './MaxHit'
 import { calculateDps, DpsParams } from '@/utils/dps'
 import { HitChanceParams } from '@/utils/hit-chance'

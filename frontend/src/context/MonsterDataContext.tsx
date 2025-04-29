@@ -1,75 +1,145 @@
-// MonsterDataContext.tsx
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-} from 'react'
+import React, { createContext, useState, useEffect, useContext, ReactNode, useMemo } from 'react'
+import { AuthContext } from '@/context/AuthContext'
+import { ref, update, get } from 'firebase/database'
+import { database } from '@/utils/firebaseConfig'
 
 interface Monster {
   name: string
   variants: { [key: string]: { [key: string]: any } }
-  // Define other monster properties as needed based on your JSON structure
+  selectedVariant: string | null
 }
 
 interface MonsterContextType {
-  monsters: Monster[]
-  setMonsters: React.Dispatch<React.SetStateAction<Monster[]>>
+  selectedMonsters: Monster[]
+  setSelectedMonsters: React.Dispatch<React.SetStateAction<Monster[]>>
+  allMonsters: Monster[]
+  setAllMonsters: React.Dispatch<React.SetStateAction<Monster[]>>
+  loadMonsterFromRTDB: () => Promise<void>
+  saveMonsterToRTDB: (selectedMonster: Monster | null) => Promise<void>
 }
 
-// Create the context with a default value (can be null or an empty array)
 const MonsterContext = createContext<MonsterContextType>({
-  monsters: [],
-  setMonsters: () => {},
+  selectedMonsters: [],
+  setSelectedMonsters: () => [],
+  allMonsters: [],
+  setAllMonsters: () => [],
+  loadMonsterFromRTDB: async () => {},
+  saveMonsterToRTDB: async () => {},
 })
 
 interface MonsterProviderProps {
   children: ReactNode
 }
 
-// Create the provider component
 const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
-  const [monsters, setMonsters] = useState<Monster[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [selectedMonsters, setSelectedMonsters] = useState<Monster[]>([])
+  const [allMonsters, setAllMonsters] = useState<Monster[]>([])
+  const [monstersLoading, setMonstersLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { user, loading } = useContext(AuthContext)
 
-  useEffect(() => {
-    const fetchMonsterData = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch('/monsters_bosses.json') // Path to your JSON file
-        if (!response.ok) {
-          throw new Error(`Failed to fetch monster data: ${response.status}`)
+  const loadMonsterFromRTDB = async () => {
+    if (!user || loading || !allMonsters.length) return
+    try {
+      const monsterRef = ref(database, `players/${user.uid}/loadouts/default/monsters`)
+      const snapshot = await get(monsterRef)
+      if (snapshot.exists()) {
+        const monsterId = snapshot.val()[0]
+        const foundMonster = allMonsters.find(m => {
+          for (const variant in m.variants) {
+            return m.variants[variant].NPC_ID === monsterId
+          }
+        })
+        if (foundMonster) {
+          const variant = Object.keys(foundMonster.variants).find(
+            key => foundMonster.variants[key].NPC_ID === monsterId
+          )
+          if (variant) {
+            const selectedMonster = {
+              ...foundMonster,
+              selectedVariant: variant,
+            }
+            setSelectedMonsters([selectedMonster])
+          }
         }
-        const data = await response.json()
-        setMonsters(data as Monster[]) // Set the monster data
-      } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setIsLoading(false)
       }
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
+
+  const saveMonsterToRTDB = async (selectedMonster: Monster | null) => {
+    if (!selectedMonster) return
+    setSelectedMonsters([selectedMonster])
+
+    if (!user) {
+      console.warn('User not authenticated, cannot save monster.')
+      return
     }
 
+    try {
+      const monsterRef = ref(database, `players/${user.uid}/loadouts/default`)
+      const monstersIds = []
+      const monsterIdToSave = selectedMonster.selectedVariant
+        ? selectedMonster.variants[selectedMonster.selectedVariant].NPC_ID
+        : selectedMonster.variants['No variant'].NPC_ID
+
+      monstersIds.push(monsterIdToSave)
+
+      await update(monsterRef, { monsters: monstersIds })
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+
+  const fetchMonsterData = async () => {
+    setMonstersLoading(true)
+    try {
+      const response = await fetch('/monsters_bosses.json')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch monster data: ${response.status}`)
+      }
+      const data = await response.json()
+      setAllMonsters(data)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setMonstersLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchMonsterData()
   }, [])
 
-  if (isLoading) {
-    return <div>Loading monster data...</div> // Or a loading spinner
+  useEffect(() => {
+    if (!loading && user && allMonsters.length > 0) {
+      loadMonsterFromRTDB()
+    }
+  }, [user, loading, allMonsters])
+
+  const value: MonsterContextType = useMemo(() => {
+    return {
+      selectedMonsters,
+      setSelectedMonsters,
+      allMonsters,
+      setAllMonsters,
+      loadMonsterFromRTDB,
+      saveMonsterToRTDB,
+    }
+  }, [selectedMonsters, setSelectedMonsters, allMonsters, saveMonsterToRTDB])
+
+  if (monstersLoading) {
+    return <div>Loading monster data...</div>
   }
 
   if (error) {
     return <div>Error: {error}</div>
   }
 
-  return (
-    <MonsterContext.Provider value={{ monsters, setMonsters }}>
-      {children}
-    </MonsterContext.Provider>
-  )
+  return <MonsterContext.Provider value={value}>{children}</MonsterContext.Provider>
 }
 
-// Custom hook to use the monster data
 const useMonsterData = (): MonsterContextType => {
   const context = useContext(MonsterContext)
   if (!context) {

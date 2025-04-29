@@ -11,6 +11,7 @@ import { Equipment } from '@/utils/types'
 import { AuthContext } from '@/context/AuthContext'
 import { ref, update, get } from 'firebase/database'
 import { database } from '@/utils/firebaseConfig'
+import { useItemData } from './ItemDataContext'
 
 export type EquipmentSlot =
   | 'head'
@@ -69,7 +70,7 @@ interface LoadoutContextState {
     loadout: SelectedItems,
     combatStyle: string
   ) => Promise<void>
-  loadLoadoutFromFirebase: (combatStyle: string) => Promise<void>
+  loadLoadoutFromFirebase: () => Promise<void>
   resetLoadout: () => void
 }
 
@@ -93,6 +94,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
   })
 
   const { user, loading } = useContext(AuthContext)
+  const { allItems, isLoading: itemDataLoading } = useItemData()
 
   const saveLoadoutToFirebase = async (
     loadout: SelectedItems,
@@ -106,7 +108,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
     try {
       const transformedLoadout = Object.entries(loadout).reduce(
         (acc: Record<EquipmentSlot, number | null>, [slot, item]) => {
-          acc[slot as EquipmentSlot] = item.id != -1 ? item.id : null
+          acc[slot as EquipmentSlot] = item.id !== -1 ? item.id : null
           return acc
         },
         {} as Record<EquipmentSlot, number | null>
@@ -132,10 +134,10 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
     try {
       const loadoutRef = ref(database, `players/${user.uid}/loadouts/default`)
       const snapshot = await get(loadoutRef)
-      if (snapshot.exists()) {
+      if (snapshot.exists() && allItems) {
         const loadedLoadout = snapshot.val()
         const newSelectedItems = { ...selectedItems }
-        
+
         for (const combatStyle in loadedLoadout) {
           if (
             combatStyle == 'melee' ||
@@ -145,18 +147,13 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
             const newCombatStyleLoadout: SelectedItems = {
               ...initialEquipmentState,
             }
-            console.log('newSel and newCom:',newSelectedItems, newCombatStyleLoadout)
-            console.log('loadedout',loadedLoadout[combatStyle])
+
             for (const slot in initialEquipmentState) {
               if (loadedLoadout[combatStyle].hasOwnProperty(slot)) {
                 const itemId = loadedLoadout[combatStyle][slot]
-                if (itemId) {
-                  newCombatStyleLoadout[slot as EquipmentSlot] = {
-                    id: itemId,
-                    name: 'not grabbed yet',
-                    image_url: 'none',
-                    stats: { slot: slot },
-                  }
+                if (itemId && allItems[itemId]) {
+                  const item = allItems[itemId]
+                  newCombatStyleLoadout[slot as EquipmentSlot] = item
                 } else {
                   newCombatStyleLoadout[slot as EquipmentSlot] = defaultItem
                 }
@@ -184,10 +181,10 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
   }
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !itemDataLoading) {
       loadLoadoutFromFirebase()
     }
-  }, [user, loading])
+  }, [user, loading, itemDataLoading, allItems])
 
   const contextValue: LoadoutContextState = useMemo(() => {
     return {

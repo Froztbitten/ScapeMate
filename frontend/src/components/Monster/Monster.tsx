@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import { Grid, Card, CardContent, Typography, Box } from '@mui/material'
@@ -7,105 +7,81 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import { useMonsterData } from '@/context/MonsterDataContext'
-import { AuthContext } from '@/context/AuthContext'
-import { ref, update, get } from 'firebase/database'
-import { database } from '@/utils/firebaseConfig'
 
 interface Monster {
   name: string
   variants: { [key: string]: { [key: string]: any } }
+  selectedVariant: string | null
 }
 
 const MonsterAutocomplete: React.FC = () => {
-  const { monsters } = useMonsterData()
+  const { selectedMonsters, allMonsters, saveMonsterToRTDB } = useMonsterData()
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null)
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null)
-  const { user, loading } = useContext(AuthContext)
+  const [monsterSubtitle, setMonsterSubtitle] = useState<string>('')
+
+  const buildMonsterSubtitle = useCallback((monster: Monster | null, variantData: any) => {
+    if (!monster || !variantData) return ''
+
+    const attribute = variantData.Monster_attribute
+    const size = variantData.Size
+    let subtitleParts: string[] = []
+
+    if (attribute) {
+      subtitleParts.push(attribute)
+    }
+
+    if (size) {
+      subtitleParts.push(`${size}x${size}`)
+    }
+
+    return subtitleParts.join(', ')
+  }, [])
 
   useEffect(() => {
-    if (!loading && monsters && user) {
-      loadMonsterFromRTDB()
+    if (selectedMonsters.length > 0) {
+      setSelectedMonster(selectedMonsters[0])
+      if (selectedMonsters[0].selectedVariant) {
+        setSelectedVariant(selectedMonsters[0].selectedVariant)
+      }
     }
-  }, [user, monsters, loading])
+  }, [selectedMonsters])
 
-  const loadMonsterFromRTDB = async () => {
-    if (user) {
-      const monsterRef = ref(
-        database,
-        `players/${user.uid}/loadouts/default/monsters`
-      )
-      await get(monsterRef)
-        .then(snapshot => {
-          if (snapshot.exists()) {
-            const monsterId = snapshot.val()[0]
-            const foundMonster = monsters.find(m => {
-              for (const variant in m.variants) {
-                return m.variants[variant].NPC_ID === monsterId
-              }
-            })
-            if (foundMonster) {
-              setSelectedMonster(foundMonster)
+  useEffect(() => {
+    if (!selectedMonster) return
 
-              const foundVariantName = Object.keys(
-                foundMonster.variants ?? {}
-              ).find(
-                variant => foundMonster.variants[variant].NPC_ID === monsterId
-              )
-              if (foundVariantName) {
-                setSelectedVariant(foundVariantName)
-              }
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Error loading monster:', error)
-        })
-    }
-  }
+    setMonsterSubtitle(buildMonsterSubtitle(selectedMonster, selectedVariant))
+  }, [selectedMonster, selectedVariant, buildMonsterSubtitle])
 
-  const saveMonsterToRTDB = async () => {
-    if (user) {
-      const monsterRef = ref(database, `players/${user.uid}/loadouts/default`)
-
-      const monstersIds = []
-      const monsterId =
-        selectedMonster?.variants[selectedVariant ?? 'No variant'].NPC_ID
-      monstersIds.push(monsterId)
-
-      await update(monsterRef, { monsters: monstersIds })
-        .then(() => {
-          console.log('Monster saved successfully!')
-        })
-        .catch(error => {
-          console.error('Error saving monster: ', error)
-        })
-    } else {
-      console.warn('User not authenticated, cannot save monster.')
-    }
-  }
-
-  const handleChangeMonster = (_event: any, value: Monster | null) => {
-    setSelectedMonster(value)
+  const handleChangeMonster = (_event: any, newValue: Monster | null) => {
+    setSelectedMonster(newValue)
     setSelectedVariant(null)
-    saveMonsterToRTDB()
+    saveMonsterToRTDB(newValue)
   }
 
   const handleChangeVariant = (event: any) => {
     setSelectedVariant(event.target.value)
-    saveMonsterToRTDB()
+    if (selectedMonster) {
+      const updatedMonster = {
+        ...selectedMonster,
+        selectedVariant: event.target.value,
+      }
+      setSelectedMonster(updatedMonster)
+      saveMonsterToRTDB(updatedMonster)
+    }
   }
 
   const variantOptions = selectedMonster
-    ? Object.keys(selectedMonster.variants)
-    : []
+    ? allMonsters.find(m => m.name === selectedMonster.name)?.variants
+    : undefined
 
-  const isSingleNoVariant =
-    variantOptions.length === 1 && variantOptions[0] === 'No variant'
+  const variantOptionsArray = variantOptions ? Object.keys(variantOptions) : []
 
-  const variantData =
-    selectedMonster && (selectedVariant || isSingleNoVariant)
-      ? selectedMonster.variants[selectedVariant ?? 'No variant']
-      : null
+  const isSingleNoVariant = variantOptionsArray.length === 1
+
+  const variantData = selectedMonster?.selectedVariant
+    ? selectedMonster?.variants[selectedMonster?.selectedVariant]
+    : selectedMonster?.variants['No variant']
 
   const getImage = (variantData: any) => {
     if (!variantData) return undefined
@@ -135,24 +111,20 @@ const MonsterAutocomplete: React.FC = () => {
     : 'https://oldschool.runescape.wiki/images/4/41/Rune_essence.png'
 
   return (
-    <Box sx={{ maxWidth: 650, margin: '0 auto', padding: 2 }}>
+    <Box sx={{ minWidth: 300, maxWidth: 650, margin: '0 auto', padding: 2 }}>
       <Autocomplete
         disablePortal
         id='monster-autocomplete'
-        options={monsters}
+        options={allMonsters}
         getOptionLabel={monster => monster.name}
         onChange={handleChangeMonster}
         value={selectedMonster?.name ? selectedMonster : null}
         renderInput={params => (
-          <TextField
-            {...params}
-            label='Search for a Monster'
-            variant='outlined'
-          />
+          <TextField {...params} label='Search for a Monster' variant='outlined' />
         )}
       />
 
-      {selectedMonster && variantOptions.length > 1 && !isSingleNoVariant && (
+      {selectedMonster && variantOptionsArray.length > 1 && !isSingleNoVariant && (
         <FormControl fullWidth sx={{ mt: 2 }}>
           <InputLabel id='variant-select-label'>Variant</InputLabel>
           <Select
@@ -161,7 +133,7 @@ const MonsterAutocomplete: React.FC = () => {
             value={selectedVariant ?? ''}
             label='Variant'
             onChange={handleChangeVariant}>
-            {variantOptions.map(variant => (
+            {variantOptionsArray.map(variant => (
               <MenuItem key={variant} value={variant}>
                 {variant}
               </MenuItem>
@@ -172,7 +144,10 @@ const MonsterAutocomplete: React.FC = () => {
 
       {selectedMonster && variantData && (
         <Box mt={3}>
-          <h2>{selectedMonster.name}</h2>
+          <Typography variant='h4' component='h2'>
+            {selectedMonster.name}
+          </Typography>
+          {monsterSubtitle && <Typography variant='subtitle1'>{monsterSubtitle}</Typography>}
           {getImage(variantData) && (
             <img
               src={getImage(variantData)}
@@ -180,9 +155,7 @@ const MonsterAutocomplete: React.FC = () => {
               style={{ width: '200px', height: '200px', objectFit: 'contain' }}
             />
           )}
-          {!isSingleNoVariant && selectedVariant && (
-            <h3>Variant: {selectedVariant}</h3>
-          )}
+          {!isSingleNoVariant && selectedVariant && <h3>Variant: {selectedVariant}</h3>}
 
           <Grid container spacing={2}>
             <Grid size={4}>
@@ -218,9 +191,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Defence_level ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Defence_level ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -259,9 +230,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Stab_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Stab_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -280,9 +249,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Slash_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Slash_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -301,9 +268,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Crush_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Crush_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -312,9 +277,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Typography variant='subtitle2'>
-                    Light Range Defence:
-                  </Typography>
+                  <Typography variant='subtitle2'>L. Range Defence:</Typography>
                   <Grid container alignItems='center' justifyContent='center'>
                     <img
                       src='https://oldschool.runescape.wiki/images/Steel_dart.png?3203e'
@@ -325,9 +288,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Light_range_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Light_range_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -335,9 +296,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Typography variant='subtitle2'>
-                    Standard Range Defence:
-                  </Typography>
+                  <Typography variant='subtitle2'>M. Range Defence:</Typography>
                   <Grid container alignItems='center' justifyContent='center'>
                     <img
                       src='https://oldschool.runescape.wiki/images/Steel_arrow_5.png?2c4a2'
@@ -348,9 +307,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Standard_range_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Standard_range_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -358,9 +315,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Typography variant='subtitle2'>
-                    Heavy Range Defence:
-                  </Typography>
+                  <Typography variant='subtitle2'>H. Range Defence:</Typography>
                   <Grid container alignItems='center' justifyContent='center'>
                     <img
                       src='https://oldschool.runescape.wiki/images/Steel_bolts_5.png?f1c11'
@@ -371,9 +326,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Heavy_range_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Heavy_range_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -394,9 +347,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Magic_defence_bonus ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Magic_defence_bonus ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>
@@ -404,9 +355,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Typography variant='subtitle2'>
-                    Elemental Weakness (%):
-                  </Typography>
+                  <Typography variant='subtitle2'>Ele. Weakness (%):</Typography>
                   <Grid container alignItems='center' justifyContent='center'>
                     <img
                       src={dynamicElementalWeaknessImage}
@@ -417,9 +366,7 @@ const MonsterAutocomplete: React.FC = () => {
                         marginRight: '5px',
                       }}
                     />
-                    <Typography>
-                      {variantData.Elemental_weakness_percent ?? 'N/A'}
-                    </Typography>
+                    <Typography>{variantData.Elemental_weakness_percent ?? 'N/A'}</Typography>
                   </Grid>
                 </CardContent>
               </Card>

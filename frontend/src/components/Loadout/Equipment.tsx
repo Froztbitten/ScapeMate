@@ -1,16 +1,12 @@
-import React, { 
+import React, {
   useState,
   MouseEvent,
-  useEffect,
-  useContext,
-  useMemo,
 } from 'react'
 import {
   Box,
   Button,
   Grid,
   Container,
-  Divider,
   Popover,
   TextField,
   Stack,
@@ -19,7 +15,13 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
 import EquipmentButton from './EquipmentButton'
-import { useLoadout, SelectedItems, EquipmentSlot, initialEquipmentState, defaultItem } from '@/context/LoadoutContext';
+import {
+  useLoadout,
+  SelectedItems,
+  EquipmentSlot,
+  initialEquipmentState,
+  defaultItem,
+} from '@/context/LoadoutContext'
 
 interface ItemsData {
   [key: string]: Equipment
@@ -42,9 +44,7 @@ const filterItemsBySlot = (slot: string, allItems: ItemsData): Equipment[] => {
   })
 }
 
-const Equipment: React.FC<EquipmentProps> = ({
-  combatStyle
-}) => {
+const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
   const items = useItemData()
   const [open, setOpen] = useState(false)
   const [slotFilter, setSlotFilter] = useState<Equipment[]>([])
@@ -52,14 +52,21 @@ const Equipment: React.FC<EquipmentProps> = ({
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
 
-  const { selectedItems, setSelectedItems, saveLoadoutToFirebase, resetLoadout} = useLoadout();
+  const {
+    selectedItems,
+    setSelectedItems,
+    saveLoadoutToFirebase,
+    resetLoadout,
+  } = useLoadout()
 
-  const combatStyleLower = combatStyle.toLowerCase() as keyof typeof selectedItems;
+  const combatStyleLower =
+    combatStyle.toLowerCase() as keyof typeof selectedItems
 
-  const currentSelectedItems: SelectedItems = selectedItems[combatStyleLower] || initialEquipmentState;
+  const currentSelectedItems: SelectedItems =
+    selectedItems[combatStyleLower] || initialEquipmentState
 
   const handleClearLoadout = () => {
-    resetLoadout();
+    resetLoadout()
   }
 
   const handleButtonClick = (event: MouseEvent, label: string) => {
@@ -83,7 +90,8 @@ const Equipment: React.FC<EquipmentProps> = ({
 
   const handleSelect = (_event: any, value: Equipment | null) => {
     const newSelectedItems = { ...selectedItems }
-    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] = value || defaultItem
+    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] =
+      value || defaultItem
     setSelectedItems(newSelectedItems)
     setSelectedItem(null)
     setSlotFilter(Object.values(items.allItems))
@@ -94,23 +102,30 @@ const Equipment: React.FC<EquipmentProps> = ({
 
   return (
     <Container>
-      <Grid container justifyContent={'center'} spacing={2} sx={{paddingBottom: '10px'}}>
+      <Grid
+        container
+        justifyContent={'center'}
+        spacing={1}>
         <Grid size={3}>
-          <Button variant='contained' disabled>Load</Button>
+          <Button variant='contained' disabled>
+            Load
+          </Button>
         </Grid>
         <Grid size={3}>
-          <Button variant='contained' disabled>Opti</Button>
+          <Button variant='contained' disabled>
+            Opti
+          </Button>
         </Grid>
         <Grid size={3}>
-          <Button variant='contained' disabled>Save</Button>
+          <Button variant='contained' disabled>
+            Save
+          </Button>
         </Grid>
         <Grid size={3}>
           <Button variant='contained' onClick={handleClearLoadout}>
             Clear
           </Button>
         </Grid>
-        
-        <Divider sx={{width: '100%'}}/>
       </Grid>
       <Box sx={{ maxWidth: '350px', paddingY: '20px' }}>
         <Grid container spacing={2} justifyContent={'center'}>

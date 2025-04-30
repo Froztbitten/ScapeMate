@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/AuthContext'
 import { ItemDataProvider } from '@/context/ItemDataContext'
 import { MonsterDataProvider } from '@/context/MonsterDataContext'
 import { LoadoutProvider } from './context/LoadoutContext'
+import { HiscoresProvider } from './context/HiscoresContext'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element') // Type guard
@@ -18,13 +19,15 @@ const root = ReactDOM.createRoot(rootElement)
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <ItemDataProvider>
-        <MonsterDataProvider>
-          <LoadoutProvider>
-            <App />
-          </LoadoutProvider>
-        </MonsterDataProvider>
-      </ItemDataProvider>
+      <HiscoresProvider>
+        <ItemDataProvider>
+          <MonsterDataProvider>
+            <LoadoutProvider>
+              <App />
+            </LoadoutProvider>
+          </MonsterDataProvider>
+        </ItemDataProvider>
+      </HiscoresProvider>
     </AuthProvider>
   </React.StrictMode>
 )

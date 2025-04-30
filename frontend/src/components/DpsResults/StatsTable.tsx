@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useItemData } from '@/context/ItemDataContext'
 import { SelectedItems, useLoadout } from '@/context/LoadoutContext'
-import { useMonsterData } from '@/context/MonsterDataContext'
+import { useMonsterData } from '@/context/TargetDataContext'
 
 interface StatBonuses {
   attack_stab: number

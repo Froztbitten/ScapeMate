@@ -6,7 +6,7 @@ import ChevronRight from '@mui/icons-material/ChevronRight'
 
 import OsrsHiscores from '@/components/OsrsHiscores.tsx'
 import Loadout from '@/components/Loadout/Loadout.tsx'
-import Monster from '@/components/Monster/Monster.tsx'
+import Monster from '@/components/Target/Target'
 import StatsTable from '@/components/DpsResults/StatsTable'
 import DpsGraph from '@/components/DpsResults/DpsGraph'
 

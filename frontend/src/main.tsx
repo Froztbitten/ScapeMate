@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App'
 import { AuthProvider } from '@/context/AuthContext'
 import { ItemDataProvider } from '@/context/ItemDataContext'
-import { MonsterDataProvider } from '@/context/MonsterDataContext'
+import { MonsterDataProvider } from '@/context/TargetDataContext'
 import { LoadoutProvider } from './context/LoadoutContext'
 import { HiscoresProvider } from './context/HiscoresContext'
 

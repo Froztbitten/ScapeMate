@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Typography } from '@mui/material'
-import { useMonsterData } from '@/context/MonsterDataContext'
+import { useMonsterData } from '@/context/TargetDataContext'
 import { useLoadout, SelectedItems } from '@/context/LoadoutContext'
 import { useItemData } from '@/context/ItemDataContext'
 import { useHiscores } from '@/context/HiscoresContext'

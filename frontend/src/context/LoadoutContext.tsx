@@ -62,6 +62,8 @@ interface LoadoutContextState {
   saveLoadoutToFirebase: (loadout: SelectedItems, combatStyle: string) => Promise<void>
   loadLoadoutFromFirebase: () => Promise<void>
   resetLoadout: (combatStyle: string) => void
+  // Added function to get currently equipped weapon
+  getCurrentWeapon: (combatStyle: string) => Equipment
 }
 
 const LoadoutContext = createContext<LoadoutContextState | undefined>(undefined)
@@ -170,6 +172,15 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
     })
   }
 
+  // Implementation of getCurrentWeapon
+  const getCurrentWeapon = (combatStyle: string): Equipment => {
+    const combatStyleItems = selectedItems[combatStyle.toLowerCase() as keyof typeof selectedItems]
+    if (!combatStyleItems) {
+      return defaultItem
+    }
+    return combatStyleItems.weapon
+  }
+
   useEffect(() => {
     if (!loading && user && !itemDataLoading) {
       loadLoadoutFromFirebase()
@@ -183,6 +194,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
       saveLoadoutToFirebase,
       loadLoadoutFromFirebase,
       resetLoadout,
+      getCurrentWeapon, // Added to context value
     }
   }, [
     selectedItems,
@@ -190,6 +202,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
     saveLoadoutToFirebase,
     loadLoadoutFromFirebase,
     resetLoadout,
+    getCurrentWeapon, // Added to dependency array
   ])
 
   return <LoadoutContext.Provider value={contextValue}>{children}</LoadoutContext.Provider>

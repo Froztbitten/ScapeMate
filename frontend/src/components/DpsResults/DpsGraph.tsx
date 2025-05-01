@@ -61,13 +61,9 @@ const DpsGraph: React.FC = () => {
         attackLevel = hiscoresData.Magic.level
       }
 
-      if (loadout.weapon.stats?.slot === '2h') {
-        loadout.shield = { ...loadout.shield, id: -1, name: '', image_url: '', stats: { slot: '' } }
-      }
-
       Object.values(loadout).forEach(item => {
-        if (item.id !== -1) {
-          if (item.stats) {
+        if (item.id !== -1 && item.id !== loadout['spec wep'].id && item.stats?.slot) {
+          if (loadout.weapon.stats?.slot !== '2h' || item.stats.slot !== 'shield') {
             if (combatStyle === 'melee') {
               newEquipmentAttackBonus += item.stats.slash_attack ?? 0
               newEquipmentStrengthBonus += item.stats.melee_strength ?? 0
@@ -78,10 +74,8 @@ const DpsGraph: React.FC = () => {
               newEquipmentAttackBonus += item.stats.magic_attack ?? 0
             }
 
-            if (item.stats.slot) {
-              if (['weapon', '2h'].includes(item.stats.slot)) {
-                weaponAttackSpeed = item.stats.speed ?? 4
-              }
+            if (['weapon', '2h'].includes(item.stats.slot)) {
+              weaponAttackSpeed = item.stats.speed ?? 4
             }
           }
         }
@@ -97,7 +91,9 @@ const DpsGraph: React.FC = () => {
           ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Defence_level)
           : 1,
         targetStyleDefenceBonus: selectedMonsters[0]?.selectedVariant
-          ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus)
+          ? Number(
+              selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus
+            )
           : 1,
         attackSpeed: weaponAttackSpeed,
       })
@@ -140,7 +136,6 @@ const DpsGraph: React.FC = () => {
             label: 'DPS',
           },
         ]}
-        colors={dpsData.map(item => item.color)}
         xAxis={[{ scaleType: 'band', id: 'combatStyle', data: ['Melee', 'Ranged', 'Magic'] }]}
       />
     </Box>

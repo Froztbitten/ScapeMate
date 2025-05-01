@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import Equipment from '@/components/Loadout/Equipment'
+import AttackStyle from '@/components/Loadout/AttackStyle'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -37,9 +38,11 @@ function a11yProps(index: number) {
 function Loadout() {
   const [value, setValue] = useState(0)
   const combatStyleTabs = ['Melee', 'Ranged', 'Magic']
+  const [combatStyle, setCombatStyle] = useState(combatStyleTabs[0])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
+    setCombatStyle(combatStyleTabs[newValue])
   }
 
   return (
@@ -65,6 +68,11 @@ function Loadout() {
           <Equipment combatStyle={tabName} />
         </TabPanel>
       ))}
+      <hr/>
+      <AttackStyle combatStyle={combatStyle} onStyleChange={function (style: any): void {
+        console.log("Selected style:", style);
+        // Do something with the selected style (e.g., update state for DPS calculation)
+      } }/>
     </Box>
   )
 }

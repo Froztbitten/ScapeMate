@@ -169,7 +169,7 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             <EquipmentButton
               large
               label='Shield'
-              // disabled={currentSelectedItems.weapon.stats?.slot === '2h'}
+              disabled={currentSelectedItems.weapon.stats?.slot === '2h'}
               selectedItem={currentSelectedItems.shield}
               onClick={handleButtonClick}
             />

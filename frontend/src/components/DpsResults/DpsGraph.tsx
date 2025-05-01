@@ -17,7 +17,6 @@ interface BarGraphData {
 const DpsGraph: React.FC = () => {
   const { selectedItems } = useLoadout()
   const { selectedMonsters } = useMonsterData()
-  const { allItems, isLoading: itemDataLoading } = useItemData()
   const { hiscoresData } = useHiscores()
 
   const [dpsData, setDpsData] = useState<BarGraphData[]>([])
@@ -43,7 +42,7 @@ const DpsGraph: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!dpsParams || itemDataLoading || !hiscoresData || !selectedMonsters) return
+    if (!dpsParams || !hiscoresData || !selectedMonsters) return
 
     const calculateLoadoutDps = (loadout: SelectedItems, combatStyle: string) => {
       let attackLevel = 1
@@ -51,6 +50,7 @@ const DpsGraph: React.FC = () => {
       let newEquipmentAttackBonus = 0
       let newEquipmentStrengthBonus = 0
       let weaponAttackSpeed = 4
+
       if (combatStyle === 'melee') {
         attackLevel = hiscoresData.Attack.level
         strengthLevel = hiscoresData.Strength.level
@@ -61,24 +61,28 @@ const DpsGraph: React.FC = () => {
         attackLevel = hiscoresData.Magic.level
       }
 
+      if (loadout.weapon.stats?.slot === '2h') {
+        loadout.shield = { ...loadout.shield, id: -1, name: '', image_url: '', stats: { slot: '' } }
+      }
+
       Object.values(loadout).forEach(item => {
-        if (item.id !== -1 && allItems[item.id]) {
-          const itemData = allItems[item.id]
-
-          if (itemData.stats) {
+        if (item.id !== -1) {
+          if (item.stats) {
             if (combatStyle === 'melee') {
-              newEquipmentAttackBonus += itemData.stats.stab_attack ?? 0
-              newEquipmentStrengthBonus += itemData.stats.melee_strength ?? 0
+              newEquipmentAttackBonus += item.stats.slash_attack ?? 0
+              newEquipmentStrengthBonus += item.stats.melee_strength ?? 0
             } else if (combatStyle === 'ranged') {
-              newEquipmentAttackBonus += itemData.stats.ranged_attack ?? 0
-              newEquipmentStrengthBonus += itemData.stats.ranged_strength ?? 0
+              newEquipmentAttackBonus += item.stats.ranged_attack ?? 0
+              newEquipmentStrengthBonus += item.stats.ranged_strength ?? 0
             } else if (combatStyle === 'magic') {
-              newEquipmentAttackBonus += itemData.stats.magic_attack ?? 0
+              newEquipmentAttackBonus += item.stats.magic_attack ?? 0
             }
-          }
 
-          if (itemData.stats?.slot && ['weapon', '2h'].includes(itemData.stats?.slot)) {
-            weaponAttackSpeed = itemData.stats.speed ?? 4
+            if (item.stats.slot) {
+              if (['weapon', '2h'].includes(item.stats.slot)) {
+                weaponAttackSpeed = item.stats.speed ?? 4
+              }
+            }
           }
         }
       })
@@ -90,10 +94,10 @@ const DpsGraph: React.FC = () => {
         equipmentAttackBonus: newEquipmentAttackBonus,
         equipmentStrengthBonus: newEquipmentStrengthBonus,
         targetDefenceLevel: selectedMonsters[0]?.selectedVariant
-          ? selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Defence_level
+          ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Defence_level)
           : 1,
         targetStyleDefenceBonus: selectedMonsters[0]?.selectedVariant
-          ? selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus
+          ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus)
           : 1,
         attackSpeed: weaponAttackSpeed,
       })

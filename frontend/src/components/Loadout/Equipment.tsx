@@ -66,7 +66,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
     selectedItems[combatStyleLower] || initialEquipmentState
 
   const handleClearLoadout = () => {
-    resetLoadout()
+    resetLoadout(combatStyle)
+    saveLoadoutToFirebase(initialEquipmentState, combatStyle)
   }
 
   const handleButtonClick = (event: MouseEvent, label: string) => {
@@ -168,6 +169,7 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             <EquipmentButton
               large
               label='Shield'
+              // disabled={currentSelectedItems.weapon.stats?.slot === '2h'}
               selectedItem={currentSelectedItems.shield}
               onClick={handleButtonClick}
             />

@@ -1,12 +1,5 @@
 // src/context/LoadoutContext.tsx
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  ReactNode,
-  useMemo,
-} from 'react'
+import React, { createContext, useState, useContext, useEffect, ReactNode, useMemo } from 'react'
 import { Equipment } from '@/utils/types'
 import { AuthContext } from '@/context/AuthContext'
 import { ref, update, get } from 'firebase/database'
@@ -66,12 +59,9 @@ interface LoadoutContextState {
       magic: SelectedItems
     }>
   >
-  saveLoadoutToFirebase: (
-    loadout: SelectedItems,
-    combatStyle: string
-  ) => Promise<void>
+  saveLoadoutToFirebase: (loadout: SelectedItems, combatStyle: string) => Promise<void>
   loadLoadoutFromFirebase: () => Promise<void>
-  resetLoadout: () => void
+  resetLoadout: (combatStyle: string) => void
 }
 
 const LoadoutContext = createContext<LoadoutContextState | undefined>(undefined)
@@ -80,9 +70,7 @@ interface LoadoutProviderProps {
   children: ReactNode
 }
 
-export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
-  children,
-}) => {
+export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) => {
   const [selectedItems, setSelectedItems] = useState<{
     melee: SelectedItems
     ranged: SelectedItems
@@ -96,10 +84,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
   const { user, loading } = useContext(AuthContext)
   const { allItems, isLoading: itemDataLoading } = useItemData()
 
-  const saveLoadoutToFirebase = async (
-    loadout: SelectedItems,
-    combatStyle: string
-  ) => {
+  const saveLoadoutToFirebase = async (loadout: SelectedItems, combatStyle: string) => {
     if (!user) {
       console.warn('User not logged in. Cannot save loadout.')
       return
@@ -139,11 +124,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
         const newSelectedItems = { ...selectedItems }
 
         for (const combatStyle in loadedLoadout) {
-          if (
-            combatStyle == 'melee' ||
-            combatStyle == 'ranged' ||
-            combatStyle == 'magic'
-          ) {
+          if (combatStyle == 'melee' || combatStyle == 'ranged' || combatStyle == 'magic') {
             const newCombatStyleLoadout: SelectedItems = {
               ...initialEquipmentState,
             }
@@ -172,11 +153,20 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
     }
   }
 
-  const resetLoadout = () => {
+  const resetLoadout = (combatStyle: string) => {
     setSelectedItems({
-      melee: { ...initialEquipmentState },
-      ranged: { ...initialEquipmentState },
-      magic: { ...initialEquipmentState },
+      melee:
+        combatStyle.toLowerCase() === 'melee'
+          ? { ...initialEquipmentState }
+          : { ...selectedItems.melee },
+      ranged:
+        combatStyle.toLowerCase() === 'ranged'
+          ? { ...initialEquipmentState }
+          : { ...selectedItems.ranged },
+      magic:
+        combatStyle.toLowerCase() === 'magic'
+          ? { ...initialEquipmentState }
+          : { ...selectedItems.magic },
     })
   }
 
@@ -202,11 +192,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({
     resetLoadout,
   ])
 
-  return (
-    <LoadoutContext.Provider value={contextValue}>
-      {children}
-    </LoadoutContext.Provider>
-  )
+  return <LoadoutContext.Provider value={contextValue}>{children}</LoadoutContext.Provider>
 }
 
 export const useLoadout = () => {

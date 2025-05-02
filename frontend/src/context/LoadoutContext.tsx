@@ -1,10 +1,9 @@
-// src/context/LoadoutContext.tsx
-import React, { createContext, useState, useContext, useEffect, ReactNode, useMemo } from 'react'
-import { Equipment } from '@/utils/types'
+import React, { createContext, useState, useContext, useEffect, useMemo } from 'react'
 import { AuthContext } from '@/context/AuthContext'
 import { ref, update, get } from 'firebase/database'
+import { Equipment } from '@/utils/types'
 import { database } from '@/utils/firebaseConfig'
-import { useItemData } from './ItemDataContext'
+import { useItemData } from '@/context/ItemDataContext'
 
 export type EquipmentSlot =
   | 'head'
@@ -62,17 +61,12 @@ interface LoadoutContextState {
   saveLoadoutToFirebase: (loadout: SelectedItems, combatStyle: string) => Promise<void>
   loadLoadoutFromFirebase: () => Promise<void>
   resetLoadout: (combatStyle: string) => void
-  // Added function to get currently equipped weapon
   getCurrentWeapon: (combatStyle: string) => Equipment
 }
 
 const LoadoutContext = createContext<LoadoutContextState | undefined>(undefined)
 
-interface LoadoutProviderProps {
-  children: ReactNode
-}
-
-export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) => {
+export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedItems, setSelectedItems] = useState<{
     melee: SelectedItems
     ranged: SelectedItems
@@ -172,7 +166,6 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
     })
   }
 
-  // Implementation of getCurrentWeapon
   const getCurrentWeapon = (combatStyle: string): Equipment => {
     const combatStyleItems = selectedItems[combatStyle.toLowerCase() as keyof typeof selectedItems]
     if (!combatStyleItems) {
@@ -194,7 +187,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
       saveLoadoutToFirebase,
       loadLoadoutFromFirebase,
       resetLoadout,
-      getCurrentWeapon, // Added to context value
+      getCurrentWeapon,
     }
   }, [
     selectedItems,
@@ -202,7 +195,7 @@ export const LoadoutProvider: React.FC<LoadoutProviderProps> = ({ children }) =>
     saveLoadoutToFirebase,
     loadLoadoutFromFirebase,
     resetLoadout,
-    getCurrentWeapon, // Added to dependency array
+    getCurrentWeapon,
   ])
 
   return <LoadoutContext.Provider value={contextValue}>{children}</LoadoutContext.Provider>

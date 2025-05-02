@@ -6,6 +6,7 @@ import { ItemDataProvider } from '@/context/ItemDataContext'
 import { MonsterDataProvider } from '@/context/TargetDataContext'
 import { LoadoutProvider } from './context/LoadoutContext'
 import { HiscoresProvider } from './context/HiscoresContext'
+import { StancesProvider } from './context/StanceContext'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element') // Type guard
@@ -23,7 +24,9 @@ root.render(
         <ItemDataProvider>
           <MonsterDataProvider>
             <LoadoutProvider>
-              <App />
+              <StancesProvider>
+                <App />
+              </StancesProvider>
             </LoadoutProvider>
           </MonsterDataProvider>
         </ItemDataProvider>

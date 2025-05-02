@@ -1,16 +1,5 @@
-import React, {
-  useState,
-  MouseEvent,
-} from 'react'
-import {
-  Box,
-  Button,
-  Grid,
-  Container,
-  Popover,
-  TextField,
-  Stack,
-} from '@mui/material'
+import React, { useState, MouseEvent } from 'react'
+import { Box, Button, Grid, Container, Popover, TextField, Stack } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
@@ -52,15 +41,9 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
 
-  const {
-    selectedItems,
-    setSelectedItems,
-    saveLoadoutToFirebase,
-    resetLoadout,
-  } = useLoadout()
+  const { selectedItems, setSelectedItems, saveLoadoutToFirebase, resetLoadout } = useLoadout()
 
-  const combatStyleLower =
-    combatStyle.toLowerCase() as keyof typeof selectedItems
+  const combatStyleLower = combatStyle.toLowerCase() as keyof typeof selectedItems
 
   const currentSelectedItems: SelectedItems =
     selectedItems[combatStyleLower] || initialEquipmentState
@@ -91,8 +74,7 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
 
   const handleSelect = (_event: any, value: Equipment | null) => {
     const newSelectedItems = { ...selectedItems }
-    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] =
-      value || defaultItem
+    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] = value || defaultItem
     setSelectedItems(newSelectedItems)
     setSelectedItem(null)
     setSlotFilter(Object.values(items.allItems))
@@ -103,10 +85,7 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
 
   return (
     <Container>
-      <Grid
-        container
-        justifyContent={'center'}
-        spacing={1}>
+      <Grid container justifyContent={'center'} spacing={1}>
         <Grid size={3}>
           <Button variant='contained' disabled>
             Load
@@ -219,12 +198,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             width: 300,
           }}
           value={selectedItem?.id != -1 ? selectedItem : null}
-          getOptionLabel={(option: Equipment) =>
-            option.name + ' (id:' + option.id.toString() + ')'
-          }
-          renderInput={params => (
-            <TextField {...params} placeholder='Start typing' />
-          )}
+          getOptionLabel={(option: Equipment) => option.name + ' (id:' + option.id.toString() + ')'}
+          renderInput={params => <TextField {...params} placeholder='Start typing' />}
         />
       </Popover>
     </Container>

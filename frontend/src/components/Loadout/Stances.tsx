@@ -1,4 +1,4 @@
-// src/components/AttackStyle.tsx
+// src/components/Stances.tsx
 import React, { useState, useEffect, useMemo } from 'react'
 import {
   FormControl,
@@ -7,11 +7,11 @@ import {
   Radio,
   Typography,
 } from '@mui/material'
-import { useLoadout } from '@/context/LoadoutContext' // Import useLoadout hook
+import { useLoadout } from '@/context/LoadoutContext'
+import { useStances } from '@/context/StanceContext'
 
-interface AttackStyleProps {
+interface StancesProps {
   combatStyle: string
-  onStyleChange: (style: any) => void // Callback function to handle style selection
 }
 
 interface Style {
@@ -22,11 +22,12 @@ interface Style {
   boost: string | null
 }
 
-const AttackStyle: React.FC<AttackStyleProps> = ({ combatStyle, onStyleChange }) => {
+const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
   const [styles, setStyles] = useState<Style[]>([])
-  const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
-  const { getCurrentWeapon } = useLoadout() // Get the getCurrentWeapon function
-  const currentWeapon = getCurrentWeapon(combatStyle) // Get the current weapon
+  const { getCurrentWeapon } = useLoadout()
+  const { stances, setStances } = useStances()
+  const currentWeapon = getCurrentWeapon(combatStyle)
+  const safeCombatStyle = combatStyle.toLowerCase()
 
   const combatStyles = useMemo(() => {
     const fetchCombatStyles = async () => {
@@ -38,7 +39,7 @@ const AttackStyle: React.FC<AttackStyleProps> = ({ combatStyle, onStyleChange })
         return await response.json()
       } catch (error) {
         console.error('Error fetching combat styles:', error)
-        return {} // Ensure styles is always an array
+        return {}
       }
     }
     return fetchCombatStyles()
@@ -46,25 +47,30 @@ const AttackStyle: React.FC<AttackStyleProps> = ({ combatStyle, onStyleChange })
 
   useEffect(() => {
     combatStyles.then(data => {
-      //Use slot from equipped weapon as key
-      console.log(currentWeapon.stats?.combatstyle, data)
       if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
         setStyles(data[currentWeapon.stats.combatstyle].styles)
       } else {
-        setStyles([]) // No styles found for weapon
+        setStyles([])
       }
     })
-  }, [combatStyles, currentWeapon]) // Re-fetch styles when the weapon changes
+    resetStance()
+  }, [combatStyles, currentWeapon])
 
-  const handleStyleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = styles.find(style => style.stance === event.target.value)
-    setSelectedStyle(event.target.value)
-    if (selected) {
-      onStyleChange(selected)
-    }
+  const resetStance = (() => {
+    setStances({
+      ...stances,
+      [safeCombatStyle]: -1,
+    })
+  })
+
+  const handleStanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStances({
+      ...stances,
+      [safeCombatStyle]: Number(event.target.value),
+    })
   }
 
-  if (!currentWeapon || currentWeapon.id === -1) { // Adjusted check for no weapon
+  if (!currentWeapon || currentWeapon.id === -1) {
     return (
       <Typography variant='body1'>
         Please select a weapon to view attack styles.
@@ -86,12 +92,12 @@ const AttackStyle: React.FC<AttackStyleProps> = ({ combatStyle, onStyleChange })
       <RadioGroup
         aria-label='attack-style'
         name='attack-style'
-        value={selectedStyle}
-        onChange={handleStyleChange}>
-        {styles.map(style => (
+        value={stances[safeCombatStyle]}
+        onChange={handleStanceChange}>
+        {styles.map((style,index) => (
           <FormControlLabel
-            key={style.stance}
-            value={style.stance}
+            key={`${style.stance} - ${style.style}`}
+            value={index}
             control={<Radio />}
             label={`${style.stance} (${style.attack_type} - ${style.style})`}
           />
@@ -101,4 +107,4 @@ const AttackStyle: React.FC<AttackStyleProps> = ({ combatStyle, onStyleChange })
   )
 }
 
-export default AttackStyle
+export default Stances

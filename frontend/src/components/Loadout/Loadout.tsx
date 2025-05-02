@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import Equipment from '@/components/Loadout/Equipment'
-import AttackStyle from '@/components/Loadout/AttackStyle'
+import Stances from '@/components/Loadout/Stances'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -69,10 +69,7 @@ function Loadout() {
         </TabPanel>
       ))}
       <hr/>
-      <AttackStyle combatStyle={combatStyle} onStyleChange={function (style: any): void {
-        console.log("Selected style:", style);
-        // Do something with the selected style (e.g., update state for DPS calculation)
-      } }/>
+      <Stances combatStyle={combatStyle}/>
     </Box>
   )
 }

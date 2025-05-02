@@ -16,7 +16,6 @@ export const calculateHitChance = (params: HitChanceParams): number => {
   const attackRoll = calculateAttackRoll(params);
   const defenceRoll = calculateDefenceRoll(params);
 
-  console.log(attackRoll, defenceRoll)
   if (attackRoll > defenceRoll) {
     return 1 - (defenceRoll + 2) / (2 * (attackRoll + 1));
   } else {

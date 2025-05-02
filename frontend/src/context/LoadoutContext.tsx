@@ -100,7 +100,6 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         `players/${user.uid}/loadouts/default/${combatStyle.toLowerCase()}`
       )
       await update(loadoutRef, transformedLoadout)
-      console.log(`Loadout saved to Firebase for user ${user.uid}.`)
     } catch (err) {
       console.error('Error saving loadout to Firebase:', err)
     }

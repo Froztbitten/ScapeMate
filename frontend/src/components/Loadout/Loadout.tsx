@@ -56,6 +56,7 @@ function Loadout() {
           {combatStyleTabs.map((tabName, index) => (
             <Tab
               key={tabName}
+              value={index}
               label={tabName}
               {...a11yProps(index)}
               sx={{ flexGrow: 1 }}

@@ -22,11 +22,7 @@ export type EquipmentSlot =
 export const defaultItem: Equipment = {
   id: -1,
   name: '',
-  image_url: '',
-  stats: {
-    slot: '',
-  },
-} as unknown as Equipment
+} as Equipment
 
 export const initialEquipmentState = {
   head: defaultItem,

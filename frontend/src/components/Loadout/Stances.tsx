@@ -1,18 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormControl, FormGroup, FormControlLabel, Checkbox, Typography } from '@mui/material'
 import { useLoadout } from '@/context/LoadoutContext'
-import { useStances } from '@/context/StanceContext'
+import { useStances, Style } from '@/context/StanceContext'
 
 interface StancesProps {
   combatStyle: string
-}
-
-interface Style {
-  stance: string
-  attack_type: string
-  style: string | null
-  experience: string[]
-  boost: string | null
 }
 
 const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
@@ -22,24 +14,12 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
   const currentWeapon = getCurrentWeapon(combatStyle)
   const safeCombatStyle = combatStyle.toLowerCase()
 
-  const combatStyles = useMemo(() => {
-    const fetchCombatStyles = async () => {
-      try {
-        const response = await fetch('/combatStyles.json')
-        if (!response.ok) {
-          throw new Error(`Failed to fetch combat styles: ${response.status}`)
-        }
-        return await response.json()
-      } catch (error) {
-        console.error('Error fetching combat styles:', error)
-        return {}
-      }
-    }
-    return fetchCombatStyles()
-  }, [])
+  const { combatStyles } = useStances()
 
   useEffect(() => {
-    combatStyles.then(data => {
+    if (!combatStyles) return;
+
+    combatStyles.then((data) => {
       if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
         let styles = data[currentWeapon.stats.combatstyle].styles
         setStyles(styles)
@@ -49,7 +29,7 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
 
   const handleStanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = event.target
-    const currentStances = stances[safeCombatStyle] || []
+    const currentStances = stances?.[safeCombatStyle] || []
     const newValue = Number(value)
 
     const updatedStances = checked
@@ -83,7 +63,7 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
           control={
             <Checkbox
               checked={
-                stances[safeCombatStyle]?.includes(index) ?? false
+                stances?.[safeCombatStyle]?.includes(index) ?? false
               }
               onChange={handleStanceChange}
               value={index}

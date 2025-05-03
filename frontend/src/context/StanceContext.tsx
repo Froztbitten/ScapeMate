@@ -4,15 +4,14 @@ import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
 
 interface StanceContextProps {
-  stances: Record<string, number>
-  setStances: React.Dispatch<React.SetStateAction<Record<string, number>>>
+  stances: Record<string, number[]>
+  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]>>>
 }
 
 const StanceContext = createContext<StanceContextProps | undefined>(undefined)
 
 export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [stances, setStances] = useState<Record<string, number>>({})
-
+  const [allStances, setAllStances] = useState<Record<string, number[]>>({})
   const { user, loading } = useContext(AuthContext)
 
   useEffect(() => {
@@ -22,7 +21,17 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
-            setStances(snapshot.val())
+            // Ensure that the loaded data is an array for each combat style
+            const loadedStances = snapshot.val() as Record<string, any>
+            const validStances: Record<string, number[]> = {}
+            for (const key in loadedStances) {
+              if (Array.isArray(loadedStances[key])) {
+                validStances[key] = loadedStances[key].map(Number).filter(Number.isInteger)
+              } else {
+                validStances[key] = []
+              }
+            }
+            setAllStances(validStances)
           }
         } catch (error) {
           console.error('Error loading stances:', error)
@@ -37,21 +46,21 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (user) {
         const stancesRef = ref(database, `players/${user.uid}/loadouts/default/stances`)
         try {
-          await update(stancesRef, stances)
+          await update(stancesRef, allStances)
         } catch (error) {
           console.error('Error saving stances:', error)
         }
       }
     }
     saveStancesToFirebase()
-  }, [stances])
+  }, [allStances])
 
   const contextValue: StanceContextProps = useMemo(() => {
     return {
-      stances,
-      setStances,
+      stances: allStances,
+      setStances: setAllStances,
     }
-  }, [stances, setStances])
+}, [allStances, setAllStances])
 
   return <StanceContext.Provider value={contextValue}>{children}</StanceContext.Provider>
 }

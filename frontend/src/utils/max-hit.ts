@@ -1,9 +1,33 @@
 export interface MaxHitParams {
-  effectiveStrength: number;
-  strengthBonus: number;
+  visibleStrengthLevel: number
+  strengthPrayerMultiplier: number
+  strengthStyleBonus: number
+  otherStrengthMultiplier: number
+  equipmentStrengthBonus: number
+}
+
+export const calculateEffectiveStrengthLevel = (params: MaxHitParams): number => {
+  const {
+    visibleStrengthLevel,
+    strengthPrayerMultiplier,
+    otherStrengthMultiplier,
+    strengthStyleBonus,
+  } = params
+
+  // Calculate the effective strength level
+  let effectiveStrengthLevel = Math.floor(visibleStrengthLevel * strengthPrayerMultiplier)
+  effectiveStrengthLevel += strengthStyleBonus
+  effectiveStrengthLevel += 8
+  effectiveStrengthLevel = Math.floor(effectiveStrengthLevel * otherStrengthMultiplier)
+  return effectiveStrengthLevel
 }
 
 export const calculateMaxHit = (params: MaxHitParams): number => {
-  const { effectiveStrength, strengthBonus } = params
-    return Math.floor(0.5 + (effectiveStrength * (strengthBonus + 64)) / 640)
-};
+  const { equipmentStrengthBonus } = params
+
+  // Calculate the effective strength level first
+  const effectiveStrengthLevel = calculateEffectiveStrengthLevel(params)
+
+  // Calculate the max hit
+  return Math.floor(0.5 + (effectiveStrengthLevel * (equipmentStrengthBonus + 64)) / 640)
+}

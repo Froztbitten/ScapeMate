@@ -7,6 +7,7 @@ interface EquipmentButtonProps {
   selectedItem: Equipment
   label: string
   large?: boolean
+  disabled?: boolean
   onClick: (event: React.MouseEvent, label: string) => void
 }
 
@@ -15,9 +16,10 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
   label,
   onClick,
   large,
+  disabled,
 }) => {
   const items = useItemData()
-  
+
   let imageUrl = ''
   if (items.allItems) {
     imageUrl =
@@ -54,6 +56,7 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
               width: 50,
               height: 50,
               display: 'block',
+              opacity: disabled ? 0.5 : 1,
             }}
           />
         )}

@@ -14,13 +14,14 @@ export interface Style {
 interface StanceContextProps {
   stances: Record<string, number[]> | null
   setStances: React.Dispatch<React.SetStateAction<Record<string, number[]> | null>>
-  combatStyles: Promise<Record<string, { styles: Style[] }>> | null
+  combatStyles: Record<string, { styles: Style[] }> | null
 }
 
 const StanceContext = createContext<StanceContextProps | null>(null)
 
 export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [allStances, setAllStances] = useState<Record<string, number[]>>({})
+  const [combatStyles, setCombatStyles] = useState<Record<string, { styles: Style[] }> | null>(null)
   const { user, loading } = useContext(AuthContext)
 
   useEffect(() => {
@@ -63,20 +64,21 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     saveStancesToFirebase()
   }, [allStances])
 
-  const combatStyles: Promise<Record<string, { styles: Style[] }>> | null = useMemo(() => {
+  useEffect(() => {
     const fetchCombatStyles = async () => {
       try {
         const response = await fetch('/combatStyles.json')
         if (!response.ok) {
           throw new Error(`Failed to fetch combat styles: ${response.status}`)
         }
-        return await response.json()
+        const data = await response.json()
+        setCombatStyles(data)
       } catch (error) {
         console.error('Error fetching combat styles:', error)
         return null
       }
     }
-    return fetchCombatStyles()
+    fetchCombatStyles()
   }, [])
 
   const contextValue: StanceContextProps = useMemo(() => {

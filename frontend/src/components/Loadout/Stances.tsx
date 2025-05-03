@@ -18,14 +18,10 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
 
   useEffect(() => {
     if (!combatStyles) return;
-
-    combatStyles.then((data) => {
-      if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
-        let styles = data[currentWeapon.stats.combatstyle].styles
-        setStyles(styles)
-      }
-    })
-  }, [currentWeapon])
+    if (currentWeapon.stats?.combatstyle && combatStyles[currentWeapon.stats.combatstyle]) {
+      setStyles(combatStyles[currentWeapon.stats.combatstyle].styles)
+    }
+  }, [combatStyles, currentWeapon])
 
   const handleStanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = event.target

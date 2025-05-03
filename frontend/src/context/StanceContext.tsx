@@ -3,12 +3,21 @@ import { database } from '@/utils/firebaseConfig'
 import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
 
-interface StanceContextProps {
-  stances: Record<string, number[]>
-  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]>>>
+export interface Style {
+  stance: string
+  attack_type: string
+  style: string | null
+  experience: string[]
+  boost: string | null
 }
 
-const StanceContext = createContext<StanceContextProps | undefined>(undefined)
+interface StanceContextProps {
+  stances: Record<string, number[]> | null
+  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]> | null>>
+  combatStyles: Promise<Record<string, { styles: Style[] }>> | null
+}
+
+const StanceContext = createContext<StanceContextProps | null>(null)
 
 export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [allStances, setAllStances] = useState<Record<string, number[]>>({})
@@ -21,7 +30,6 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
-            // Ensure that the loaded data is an array for each combat style
             const loadedStances = snapshot.val() as Record<string, any>
             const validStances: Record<string, number[]> = {}
             for (const key in loadedStances) {
@@ -55,12 +63,31 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     saveStancesToFirebase()
   }, [allStances])
 
+  const combatStyles: Promise<Record<string, { styles: Style[] }>> | null = useMemo(() => {
+    const fetchCombatStyles = async () => {
+      try {
+        const response = await fetch('/combatStyles.json')
+        if (!response.ok) {
+          throw new Error(`Failed to fetch combat styles: ${response.status}`)
+        }
+        return await response.json()
+      } catch (error) {
+        console.error('Error fetching combat styles:', error)
+        return null
+      }
+    }
+    return fetchCombatStyles()
+  }, [])
+
   const contextValue: StanceContextProps = useMemo(() => {
     return {
-      stances: allStances,
-      setStances: setAllStances,
+        stances: allStances,
+        setStances: setAllStances as React.Dispatch<
+          React.SetStateAction<Record<string, number[]> | null>
+        >,
+        combatStyles: combatStyles,
     }
-}, [allStances, setAllStances])
+  }, [allStances, setAllStances, combatStyles])
 
   return <StanceContext.Provider value={contextValue}>{children}</StanceContext.Provider>
 }

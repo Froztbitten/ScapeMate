@@ -42,7 +42,6 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
     combatStyles.then(data => {
       if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
         let styles = data[currentWeapon.stats.combatstyle].styles
-        console.log(styles)
         setStyles(styles)
       }
     })

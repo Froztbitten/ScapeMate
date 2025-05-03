@@ -4,8 +4,8 @@ import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
 
 interface StanceContextProps {
-  stances: Record<string, number>
-  setStances: React.Dispatch<React.SetStateAction<Record<string, number>>>
+  stances: Record<string, number[]>
+  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]>>>
 }
 
 const StanceContext = createContext<StanceContextProps | undefined>(undefined)
@@ -22,7 +22,16 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
-            setStances(snapshot.val())
+            // Ensure that the loaded data is an array for each combat style
+            const loadedStances = snapshot.val()
+            setStances(
+              Object.fromEntries(
+                Object.entries(loadedStances).map(([key, value]) => [
+                  key,
+                  Array.isArray(value) ? value : [],
+                ])
+              )
+            )
           }
         } catch (error) {
           console.error('Error loading stances:', error)

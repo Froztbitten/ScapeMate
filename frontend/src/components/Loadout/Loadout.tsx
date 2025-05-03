@@ -54,6 +54,7 @@ function Loadout() {
       const initialStyle = await loadCombatStyleFromFirebase()
       if (initialStyle !== null && initialStyle >= 0 && initialStyle < combatStyleTabs.length) {
         setValue(initialStyle)
+        setCombatStyle(combatStyleTabs[initialStyle])
       }
     }
     loadInitialCombatStyle()

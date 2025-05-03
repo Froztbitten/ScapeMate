@@ -10,6 +10,5 @@ export const calculateDps = (params: DpsParams): number => {
 
   const hitChance = calculateHitChance(params)
   const maxHit = calculateMaxHit(params)
-
-  return ((maxHit / 2) * hitChance) / (attackSpeed * 0.6)
+  return ((maxHit / 2 + 1 / (maxHit + 1)) * hitChance) / (attackSpeed * 0.6)
 }

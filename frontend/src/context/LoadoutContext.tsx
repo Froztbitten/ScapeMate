@@ -58,6 +58,8 @@ interface LoadoutContextState {
   loadLoadoutFromFirebase: () => Promise<void>
   resetLoadout: (combatStyle: string) => void
   getCurrentWeapon: (combatStyle: string) => Equipment
+  saveCombatStyleToFirebase: (combatStyle: number) => Promise<void>
+  loadCombatStyleFromFirebase: () => Promise<number | null>
 }
 
 const LoadoutContext = createContext<LoadoutContextState | undefined>(undefined)
@@ -76,26 +78,31 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const { user, loading } = useContext(AuthContext)
   const { allItems, isLoading: itemDataLoading } = useItemData()
 
+  const loadoutRef = useMemo(() => {
+    if (user) {
+      return ref(database, `players/${user.uid}/loadouts/default`)
+    }
+    return null
+  }, [user])
+
   const saveLoadoutToFirebase = async (loadout: SelectedItems, combatStyle: string) => {
-    if (!user) {
+    if (!user || !loadoutRef) {
       console.warn('User not logged in. Cannot save loadout.')
       return
     }
 
+    const transformedLoadout = Object.entries(loadout).reduce(
+      (acc: Record<EquipmentSlot, number | null>, [slot, item]) => {
+        acc[slot as EquipmentSlot] = item.id !== -1 ? item.id : null
+        return acc
+      },
+      {} as Record<EquipmentSlot, number | null>
+    )
     try {
-      const transformedLoadout = Object.entries(loadout).reduce(
-        (acc: Record<EquipmentSlot, number | null>, [slot, item]) => {
-          acc[slot as EquipmentSlot] = item.id !== -1 ? item.id : null
-          return acc
-        },
-        {} as Record<EquipmentSlot, number | null>
+      await update(
+        ref(database, `players/${user.uid}/loadouts/default/${combatStyle.toLowerCase()}`),
+        transformedLoadout
       )
-
-      const loadoutRef = ref(
-        database,
-        `players/${user.uid}/loadouts/default/${combatStyle.toLowerCase()}`
-      )
-      await update(loadoutRef, transformedLoadout)
     } catch (err) {
       console.error('Error saving loadout to Firebase:', err)
     }
@@ -144,6 +151,38 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }
 
+  const saveCombatStyleToFirebase = async (combatStyle: number) => {
+    if (!user || !loadoutRef) {
+      console.warn('User not logged in. Cannot save combat style.')
+      return
+    }
+
+    try {
+      await update(loadoutRef, { currentCombatStyle: combatStyle })
+    } catch (err) {
+      console.error('Error saving combat style to firebase:', err)
+    }
+  }
+
+  const loadCombatStyleFromFirebase = async (): Promise<number | null> => {
+    if (!user || !loadoutRef) {
+      console.warn('User not logged in. Cannot load combat style.')
+      return null
+    }
+
+    try {
+      const snapshot = await get(loadoutRef)
+      if (snapshot.exists()) {
+        const data = snapshot.val()
+        return data.currentCombatStyle ?? null
+      }
+      return null
+    } catch (error) {
+      console.error('Error loading combat style from Firebase:', error)
+      return null
+    }
+  }
+
   const resetLoadout = (combatStyle: string) => {
     setSelectedItems({
       melee:
@@ -183,6 +222,8 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
       loadLoadoutFromFirebase,
       resetLoadout,
       getCurrentWeapon,
+      saveCombatStyleToFirebase,
+      loadCombatStyleFromFirebase,
     }
   }, [
     selectedItems,
@@ -191,6 +232,8 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadLoadoutFromFirebase,
     resetLoadout,
     getCurrentWeapon,
+    saveCombatStyleToFirebase,
+    loadCombatStyleFromFirebase,
   ])
 
   return <LoadoutContext.Provider value={contextValue}>{children}</LoadoutContext.Provider>

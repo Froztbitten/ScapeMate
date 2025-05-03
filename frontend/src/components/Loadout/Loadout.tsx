@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import Equipment from '@/components/Loadout/Equipment'
 import Stances from '@/components/Loadout/Stances'
+import { useLoadout } from '@/context/LoadoutContext'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -39,16 +40,35 @@ function Loadout() {
   const [value, setValue] = useState(0)
   const combatStyleTabs = ['Melee', 'Ranged', 'Magic']
   const [combatStyle, setCombatStyle] = useState(combatStyleTabs[0])
+  const { saveCombatStyleToFirebase, loadCombatStyleFromFirebase } = useLoadout()
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = async (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
-    setCombatStyle(combatStyleTabs[newValue])
+    const newCombatStyle = combatStyleTabs[newValue]
+    setCombatStyle(newCombatStyle)
+    await saveCombatStyleToFirebase(newValue)
   }
+
+  useEffect(() => {
+    const loadInitialCombatStyle = async () => {
+      const initialStyle = await loadCombatStyleFromFirebase()
+      if (initialStyle !== null && initialStyle >= 0 && initialStyle < combatStyleTabs.length) {
+        setValue(initialStyle)
+      }
+    }
+    loadInitialCombatStyle()
+  }, [])
 
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
+          sx={{
+            '.MuiTabs-indicator': {
+              backgroundColor: 'white',
+            },
+            color: 'white'
+          }}
           value={value}
           onChange={handleChange}
           aria-label='loadout tabs'
@@ -69,8 +89,8 @@ function Loadout() {
           <Equipment combatStyle={tabName} />
         </TabPanel>
       ))}
-      <hr/>
-      <Stances combatStyle={combatStyle}/>
+      <hr />
+      <Stances combatStyle={combatStyle} />
     </Box>
   )
 }

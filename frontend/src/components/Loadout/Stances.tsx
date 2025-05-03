@@ -26,7 +26,6 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
   const [styles, setStyles] = useState<Style[]>([])
   const { getCurrentWeapon } = useLoadout()
   const { stances, setStances } = useStances()
-  const [isFirst, setIsFirst] = useState(true)
   const currentWeapon = getCurrentWeapon(combatStyle)
   const safeCombatStyle = combatStyle.toLowerCase()
 
@@ -51,19 +50,8 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
       if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
         setStyles(data[currentWeapon.stats.combatstyle].styles)
       }
-      setIsFirst(false)
     })
-    if (!isFirst) {
-      resetStance()
-    }
-  }, [combatStyles, currentWeapon])
-
-  const resetStance = (() => {
-    setStances({
-      ...stances,
-      [safeCombatStyle]: -1,
-    })
-  })
+  }, [currentWeapon])
 
   const handleStanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStances({

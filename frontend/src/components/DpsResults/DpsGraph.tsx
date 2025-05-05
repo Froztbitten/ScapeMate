@@ -52,8 +52,11 @@ const DpsGraph: React.FC = () => {
       let strengthLevel = 1
       let attackStyleBonus = 0
       let strengthStyleBonus = 0
-      let newEquipmentAttackBonus = 0
-      let newEquipmentStrengthBonus = 0
+      let equipmentAttackBonus = 0
+      let equipmentStabBonus = 0
+      let equipmentSlashBonus = 0
+      let equipmentCrushBonus = 0
+      let equipmentStrengthBonus = 0
       let weaponAttackSpeed = 4
       let targetStyleDefenceBonus = 0
 
@@ -79,19 +82,15 @@ const DpsGraph: React.FC = () => {
         if (item.id !== -1 && item.id !== loadout['spec wep'].id && item.stats?.slot) {
           if (loadout.weapon.stats?.slot !== '2h' || item.stats.slot !== 'shield') {
             if (combatStyle === 'melee') {
-              if (currentStyle?.attack_type === 'Stab') {
-                newEquipmentAttackBonus += item.stats.stab_attack ?? 0
-              } else if (currentStyle?.attack_type === 'Slash') {
-                newEquipmentAttackBonus += item.stats.slash_attack ?? 0
-              } else if (currentStyle?.attack_type === 'Crush') {
-                newEquipmentAttackBonus += item.stats.crush_attack ?? 0
-              }
-              newEquipmentStrengthBonus += item.stats.melee_strength ?? 0
+              equipmentStabBonus += item.stats.stab_attack ?? 0
+              equipmentSlashBonus += item.stats.slash_attack ?? 0
+              equipmentCrushBonus += item.stats.crush_attack ?? 0
+              equipmentStrengthBonus += item.stats.melee_strength ?? 0
             } else if (combatStyle === 'ranged') {
-              newEquipmentAttackBonus += item.stats.ranged_attack ?? 0
-              newEquipmentStrengthBonus += item.stats.ranged_strength ?? 0
+              equipmentAttackBonus += item.stats.ranged_attack ?? 0
+              equipmentStrengthBonus += item.stats.ranged_strength ?? 0
             } else if (combatStyle === 'magic') {
-              newEquipmentAttackBonus += item.stats.magic_attack ?? 0
+              equipmentAttackBonus += item.stats.magic_attack ?? 0
             }
 
             if (['weapon', '2h'].includes(item.stats.slot)) {
@@ -106,16 +105,36 @@ const DpsGraph: React.FC = () => {
 
       if (selectedMonsters[0].selectedVariant !== null) {
         if (currentStyle?.attack_type === 'Stab') {
+          equipmentAttackBonus = equipmentStabBonus
           targetStyleDefenceBonus = Number(
             selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus
           )
         } else if (currentStyle?.attack_type === 'Slash') {
+          equipmentAttackBonus = equipmentSlashBonus
           targetStyleDefenceBonus = Number(
             selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Slash_defence_bonus
           )
         } else if (currentStyle?.attack_type === 'Crush') {
+          equipmentAttackBonus = equipmentCrushBonus
           targetStyleDefenceBonus = Number(
             selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Crush_defence_bonus
+          )
+        } else if (currentStyle?.attack_type === 'Light') {
+          targetStyleDefenceBonus = Number(
+            selectedMonsters[0].variants[selectedMonsters[0].selectedVariant]
+              .Light_range_defence_bonus
+          )
+        } else if (
+          currentStyle?.attack_type === 'Standard' ||
+          currentStyle?.attack_type === 'Ranged'
+        ) {
+          targetStyleDefenceBonus = Number(
+            selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Range_defence_bonus
+          )
+        } else if (currentStyle?.attack_type === 'Heavy') {
+          targetStyleDefenceBonus = Number(
+            selectedMonsters[0].variants[selectedMonsters[0].selectedVariant]
+              .Heavy_range_defence_bonus
           )
         }
       }
@@ -127,6 +146,9 @@ const DpsGraph: React.FC = () => {
       } else if (currentStyle?.style === 'Controlled') {
         attackStyleBonus += 1
         strengthStyleBonus += 1
+        // defenceStyleBonus += 1
+      } else if (currentStyle?.style === 'Longrange') {
+        // defenceStyleBonus += 3
       }
 
       const dps = calculateDps({
@@ -135,8 +157,8 @@ const DpsGraph: React.FC = () => {
         visibleStrengthLevel: strengthLevel,
         attackStyleBonus: attackStyleBonus,
         strengthStyleBonus: strengthStyleBonus,
-        equipmentAttackBonus: newEquipmentAttackBonus,
-        equipmentStrengthBonus: newEquipmentStrengthBonus,
+        equipmentAttackBonus: equipmentAttackBonus,
+        equipmentStrengthBonus: equipmentStrengthBonus,
         targetDefenceLevel: selectedMonsters[0]?.selectedVariant
           ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Defence_level)
           : 1,

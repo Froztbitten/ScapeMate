@@ -54,6 +54,9 @@ const MonsterAutocomplete: React.FC = () => {
       if (selectedMonsters[0].selectedVariant) {
         setSelectedVariant(selectedMonsters[0].selectedVariant)
       }
+      else if (selectedMonsters[0].variants && Object.keys(selectedMonsters[0].variants).length > 0){
+        setSelectedVariant(Object.keys(selectedMonsters[0].variants)[0])
+      }
     }
   }, [selectedMonsters])
 
@@ -76,6 +79,7 @@ const MonsterAutocomplete: React.FC = () => {
         ...selectedMonster,
         selectedVariant: event.target.value,
       }
+      console.log("updated monster",updatedMonster)
       setSelectedMonster(updatedMonster)
       saveMonsterToRTDB(updatedMonster)
     }

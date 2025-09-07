@@ -69,6 +69,7 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
   }
 
   const saveMonsterToRTDB = async (selectedMonster: Monster | null) => {
+    console.log(selectedMonster)
     if (!selectedMonster) return
     setSelectedMonsters([selectedMonster])
 
@@ -80,7 +81,7 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
     try {
       const monsterRef = ref(database, `players/${user.uid}/loadouts/default`)
       const monstersIds = []
-      const monsterIdToSave = selectedMonster.selectedVariant
+      const monsterIdToSave = selectedMonster.selectedVariant != null
         ? selectedMonster.variants[selectedMonster.selectedVariant].NPC_ID
         : selectedMonster.variants['No variant'].NPC_ID
 

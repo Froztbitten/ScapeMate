@@ -9,7 +9,7 @@ import { useStances } from '@/context/StanceContext'
 
 interface BarGraphData {
   label: string
-  data: number
+  data: number[]
   color?: string
   id: string
 }
@@ -103,7 +103,9 @@ const DpsGraph: React.FC = () => {
         }
       })
 
-      if (selectedMonsters[0].selectedVariant !== null) {
+      if (
+        selectedMonsters[0] != null && selectedMonsters[0].selectedVariant != null
+      ) {
         if (currentStyle?.attack_type === 'Stab') {
           equipmentAttackBonus = equipmentStabBonus
           targetStyleDefenceBonus = Number(
@@ -146,9 +148,6 @@ const DpsGraph: React.FC = () => {
       } else if (currentStyle?.style === 'Controlled') {
         attackStyleBonus += 1
         strengthStyleBonus += 1
-        // defenceStyleBonus += 1
-      } else if (currentStyle?.style === 'Longrange') {
-        // defenceStyleBonus += 3
       }
 
       const dps = calculateDps({
@@ -170,15 +169,27 @@ const DpsGraph: React.FC = () => {
 
     const newDpsData: BarGraphData[] = []
     Object.entries(selectedItems).forEach(([combatStyle, loadout]) => {
-      const safeCombatStyle = combatStyle.toLowerCase()
-      const selectedStances = stances?.[safeCombatStyle] || []
+      const selectedStances = stances?.[combatStyle] || []
 
       if (selectedStances.length > 0) {
         selectedStances.forEach(stanceIndex => {
           newDpsData.push({
-            label: `${combatStyle} (Stance ${stanceIndex + 1})`,
-            data: calculateLoadoutDps(loadout, safeCombatStyle, stanceIndex),
-            id: `${safeCombatStyle}-stance-${stanceIndex}`,
+            label: `${combatStyle.at(0)?.toUpperCase() + combatStyle.slice(1)}: ${
+              combatStyles?.[loadout.weapon.stats?.combatstyle ?? '']?.styles[stanceIndex]
+                ?.stance ?? ''
+            }`,
+            data: [
+              parseFloat(calculateLoadoutDps(loadout, combatStyle, stanceIndex).toPrecision(3)),
+            ],
+            id: `${combatStyle} ${stanceIndex}`,
+            color:
+              combatStyle === 'melee'
+                ? `rgba(255, ${100 - stanceIndex * 30}, ${100 - stanceIndex * 30}, 1)`
+                : combatStyle === 'ranged'
+                ? `rgba(${100 - stanceIndex * 30}, 255, ${100 - stanceIndex * 30}, 1)`
+                : combatStyle === 'magic'
+                ? `rgba(${100 - stanceIndex * 30}, ${100 - stanceIndex * 30}, 255, 1)`
+                : '',
           })
         })
       }
@@ -192,21 +203,16 @@ const DpsGraph: React.FC = () => {
         Calculated DPS For Loadout(s)
       </Typography>
       <BarChart
-        width={700}
         height={400}
-        series={[
-          {
-            data: dpsData.map(item => item.data),
-            label: 'DPS',
-          },
-        ]}
-        xAxis={[
-          {
-            scaleType: 'band',
-            id: 'combatStyle',
-            data: dpsData.map(item => item.label),
-          },
-        ]}
+        series={dpsData}
+        // xAxis={[
+        //   {
+        //     scaleType: 'band',
+        //     id: 'combatStyle',
+        //     data: dpsData.map(item => item.label),
+        //   },
+        // ]}
+        barLabel='value'
       />
     </Box>
   )

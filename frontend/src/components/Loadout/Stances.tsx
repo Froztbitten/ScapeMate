@@ -27,14 +27,17 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
     const { checked, value } = event.target
     const currentStances = stances?.[safeCombatStyle] || []
     const newValue = Number(value)
-
-    const updatedStances = checked
-      ? [...currentStances, newValue]
-      : currentStances.filter((stance: number) => stance !== newValue)
-
-    setStances({ ...stances, [safeCombatStyle]: updatedStances })
+    let updatedStances = [...currentStances];
+  
+    if (checked) {    
+      const insertIndex = newValue;
+      updatedStances = [...updatedStances.slice(0, insertIndex), newValue, ...updatedStances.slice(insertIndex)];
+    } else {
+      updatedStances = updatedStances.filter(stance => stance !== newValue);
+    }
+    setStances({ ...stances, [safeCombatStyle]: updatedStances });
   }
-
+  
   if (!currentWeapon || currentWeapon.id === -1) {
     return (<Typography variant='body1'>
       Please select a weapon to view attack styles.

@@ -10,9 +10,11 @@ import {
   Avatar,
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
+import { Routes, Route, NavLink } from 'react-router-dom'
 import ProgressionTree from '@/pages/ProgressionTree.tsx'
 import DpsCalculator from '@/pages/DpsCalculator.tsx'
 import ItemSearch from '@/pages/ItemSearch.tsx'
+import HomePage from '@/pages/HomePage.tsx'
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -23,16 +25,9 @@ import { auth, provider } from '@/utils/firebaseConfig'
 import { getThemeByName, palettes } from '@/theme/index.js'
 import ThemeSwitcher from '@/theme/ThemeSwitcher'
 
-type TabValue = 'dpsCalculator' | 'equipmentSearch' | 'map'
-
 function App() {
-  const [activeTab, setActiveTab] = useState<TabValue>('dpsCalculator')
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [themeName, setThemeName] = useState('Navigation Calculator')
-
-  const handleTabChange = (newValue: TabValue) => {
-    setActiveTab(newValue)
-  }
 
   const handleLogin = async () => {
     try {
@@ -66,6 +61,18 @@ function App() {
     return () => unsubscribe()
   }, [])
 
+  const navLinkStyle = {
+    my: 2,
+    color: 'white',
+    display: 'block',
+    textDecoration: 'none',
+  }
+
+  const activeLinkStyle = {
+    ...navLinkStyle,
+    textDecoration: 'underline',
+  }
+
   return (
     <ThemeProvider theme={activeTheme}>
       <CssBaseline />
@@ -74,18 +81,31 @@ function App() {
           <Toolbar>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               <Button
-                onClick={() => handleTabChange('dpsCalculator')}
-                sx={{ my: 2, color: 'white', display: 'block' }}>
+                component={NavLink}
+                to='/'
+                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+              >
+                Home
+              </Button>
+              <Button
+                component={NavLink}
+                to='/dps-calculator'
+                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+              >
                 DPS Calculator
               </Button>
               <Button
-                onClick={() => handleTabChange('equipmentSearch')}
-                sx={{ my: 2, color: 'white', display: 'block' }}>
+                component={NavLink}
+                to='/item-search'
+                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+              >
                 Equipment Search
               </Button>
               <Button
-                onClick={() => handleTabChange('map')}
-                sx={{ my: 2, color: 'white', display: 'block' }}>
+                component={NavLink}
+                to='/progression-tree'
+                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+              >
                 Map
               </Button>
             </Box>
@@ -126,9 +146,12 @@ function App() {
           </Toolbar>
         </AppBar>
         <Box sx={{ height: '100%' }}>
-          {activeTab === 'dpsCalculator' && <DpsCalculator />}
-          {activeTab === 'equipmentSearch' && <ItemSearch />}
-          {activeTab === 'map' && <ProgressionTree />}
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/dps-calculator' element={<DpsCalculator />} />
+            <Route path='/item-search' element={<ItemSearch />} />
+            <Route path='/progression-tree' element={<ProgressionTree />} />
+          </Routes>
         </Box>
       </Container>
     </ThemeProvider>

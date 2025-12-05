@@ -1,3 +1,4 @@
+import { BrowserRouter } from 'react-router-dom';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App'
@@ -19,18 +20,20 @@ document.body.style.overflow = 'hidden'
 const root = ReactDOM.createRoot(rootElement)
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <HiscoresProvider>
-        <ItemDataProvider>
-          <MonsterDataProvider>
-            <LoadoutProvider>
-              <StancesProvider>
-                <App />
-              </StancesProvider>
-            </LoadoutProvider>
-          </MonsterDataProvider>
-        </ItemDataProvider>
-      </HiscoresProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <HiscoresProvider>
+          <ItemDataProvider>
+            <MonsterDataProvider>
+              <LoadoutProvider>
+                <StancesProvider>
+                  <App />
+                </StancesProvider>
+              </LoadoutProvider>
+            </MonsterDataProvider>
+          </ItemDataProvider>
+        </HiscoresProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 )

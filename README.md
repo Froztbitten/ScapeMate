@@ -40,25 +40,39 @@ run the emulators (below) and use the emulator URL.
 
 Run these from `frontend/`:
 
-| Command              | What it does                     |
-| -------------------- | -------------------------------- |
-| `npm run dev`        | Dev server on port 5173          |
-| `npm run build`      | Typecheck (`tsc -b`) then bundle |
-| `npm run typecheck`  | Typecheck only                   |
-| `npm run lint`       | ESLint                           |
-| `npm test`           | Vitest, single run               |
-| `npm run test:watch` | Vitest in watch mode             |
-| `npm run coverage`   | Vitest with a coverage report    |
+| Command              | What it does                              |
+| -------------------- | ----------------------------------------- |
+| `npm run dev`        | Dev server on port 5173                   |
+| `npm run dev:all`    | Dev server **and** the functions emulator |
+| `npm run emulators`  | Functions emulator only                   |
+| `npm run build`      | Typecheck (`tsc -b`) then bundle          |
+| `npm run typecheck`  | Typecheck only                            |
+| `npm run lint`       | ESLint                                    |
+| `npm test`           | Vitest, single run                        |
+| `npm run test:watch` | Vitest in watch mode                      |
+| `npm run coverage`   | Vitest with a coverage report             |
 
 `npm run build` fails on type errors. That is deliberate — it previously ran
 `vite build` alone, which strips types without checking them.
 
 ## Emulators
 
+The Connect page and the hiscores lookup call the Cloud Functions API. Every
+other feature reads Firebase or the static JSON directly, so for ordinary UI
+work `npm run dev` alone is enough. For those two, run both together:
+
 ```bash
-cd functions && npm install
-firebase emulators:start
+cd frontend && npm run dev:all
 ```
+
+Both scripts set `NODE_ENV=development`, which is what puts localhost in the
+API's CORS allow-list. Without it the emulator behaves like production and
+rejects the browser with an opaque "Failed to fetch".
+
+Only the _functions_ emulator starts, deliberately. If the database emulator
+ran too, the function would write pairing codes into an emulated database
+while the Connect page reads the real one, and pairing would appear to do
+nothing. As it is, the Admin SDK writes to the real database.
 
 The emulators bind to `0.0.0.0` so you can test from another device on the
 same network. Emulator UI is on port 4000.

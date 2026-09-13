@@ -50,6 +50,7 @@ jobs:
           cache-dependency-path: functions/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm run lint
+      - run: npm test
 
   format:
     runs-on: ubuntu-latest

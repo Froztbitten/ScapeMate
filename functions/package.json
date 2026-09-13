@@ -8,7 +8,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "engines": {
     "node": "22"

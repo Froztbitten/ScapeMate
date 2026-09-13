@@ -2,6 +2,7 @@ const functions = require('firebase-functions')
 const express = require('express')
 const axios = require('axios')
 const cors = require('cors')
+const pluginLink = require('./plugin-link')
 
 const app = express()
 
@@ -92,6 +93,10 @@ app.get('/api/osrs-hiscores', async (req, res) => {
     }
   }
 })
+
+// --- RuneLite plugin pairing and sync ---
+
+pluginLink.register(app)
 
 // --- Basic Root Route (Optional) ---
 app.get('/', (req, res) => {

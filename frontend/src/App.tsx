@@ -35,6 +35,7 @@ import ThemeSwitcher from '@/theme/ThemeSwitcher'
 const ProgressionTree = lazy(() => import('@/pages/ProgressionTree.tsx'))
 const DpsCalculator = lazy(() => import('@/pages/DpsCalculator.tsx'))
 const ItemSearch = lazy(() => import('@/pages/ItemSearch.tsx'))
+const ConnectPlugin = lazy(() => import('@/pages/ConnectPlugin.tsx'))
 
 function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
@@ -103,6 +104,9 @@ function App() {
               <Button component={NavLink} to='/progression-tree' sx={navLinkSx}>
                 Map
               </Button>
+              <Button component={NavLink} to='/connect' sx={navLinkSx}>
+                Connect
+              </Button>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}></Box>
             <Box>
@@ -148,6 +152,7 @@ function App() {
               <Route path='/dps-calculator' element={<DpsCalculator />} />
               <Route path='/item-search' element={<ItemSearch />} />
               <Route path='/progression-tree' element={<ProgressionTree />} />
+              <Route path='/connect' element={<ConnectPlugin />} />
             </Routes>
           </Suspense>
         </Box>

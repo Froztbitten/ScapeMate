@@ -136,7 +136,10 @@ const skillNames: string[] = [
   'Zulrah',
 ]
 
-const parseHiscoresCSV = (csvData: string): Hiscores => {
+/** The hiscores API uses -1 to mean "unranked", for rank and for score alike. */
+const UNRANKED = -1
+
+export const parseHiscoresCSV = (csvData: string): Hiscores => {
   if (!csvData || typeof csvData !== 'string') {
     return {}
   }
@@ -145,20 +148,28 @@ const parseHiscoresCSV = (csvData: string): Hiscores => {
   const hiscores: Hiscores = {}
 
   lines.forEach((line, index) => {
-    if (index < skillNames.length) {
-      const [rank, level, experience] = line.split(',')
-      const skillName = skillNames[index]
+    if (index >= skillNames.length) return
 
-      if (parseInt(rank) > 0 && parseInt(level) > 0) {
-        hiscores[skillName] = {
-          rank: parseInt(rank),
-          level: parseInt(level),
-        }
-      }
-      if (experience ? parseInt(experience) > 0 : false) {
-        hiscores[skillName].experience = parseInt(experience)
-      }
+    const skillName = skillNames[index]
+    const [rawRank, rawLevel, rawExperience] = line.split(',')
+    const rank = parseInt(rawRank, 10)
+    const level = parseInt(rawLevel, 10)
+    const experience = parseInt(rawExperience, 10)
+
+    // Being unranked is not the same as having no data: a skill outside the
+    // top rankings still reports a real level and experience (the API line
+    // "-1,75,1271864"). Only a negative level means there is nothing here.
+    if (!Number.isFinite(level) || level < 0) return
+
+    const entry: HiscoreEntry = {
+      rank: Number.isFinite(rank) && rank > 0 ? rank : UNRANKED,
+      level,
     }
+    if (Number.isFinite(experience) && experience > 0) {
+      entry.experience = experience
+    }
+
+    hiscores[skillName] = entry
   })
   return hiscores
 }

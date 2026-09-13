@@ -9,19 +9,32 @@ import { database } from '@/utils/firebaseConfig'
 import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
 
-interface StanceContextProps {
-  /** Selected attack-style indices, keyed by lowercased combat style. */
-  stances: Record<string, number[]>
-  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]>>>
+export interface Style {
+  stance: string
+  attack_type: string
+  style: string | null
+  experience: string[]
+  boost: string | null
 }
 
-const StanceContext = createContext<StanceContextProps | undefined>(undefined)
+interface StanceContextProps {
+  stances: Record<string, number[]> | null
+  setStances: React.Dispatch<
+    React.SetStateAction<Record<string, number[]> | null>
+  >
+  combatStyles: Record<string, { styles: Style[] }> | null
+}
+
+const StanceContext = createContext<StanceContextProps | null>(null)
 
 export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [stances, setStances] = useState<Record<string, number[]>>({})
-
+  const [allStances, setAllStances] = useState<Record<string, number[]>>({})
+  const [combatStyles, setCombatStyles] = useState<Record<
+    string,
+    { styles: Style[] }
+  > | null>(null)
   const { user, loading } = useContext(AuthContext)
 
   useEffect(() => {
@@ -34,7 +47,18 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
-            setStances(snapshot.val())
+            const loadedStances = snapshot.val() as Record<string, any>
+            const validStances: Record<string, number[]> = {}
+            for (const key in loadedStances) {
+              if (Array.isArray(loadedStances[key])) {
+                validStances[key] = loadedStances[key]
+                  .map(Number)
+                  .filter(Number.isInteger)
+              } else {
+                validStances[key] = []
+              }
+            }
+            setAllStances(validStances)
           }
         } catch (error) {
           console.error('Error loading stances:', error)
@@ -52,21 +76,41 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({
           `players/${user.uid}/loadouts/default/stances`
         )
         try {
-          await update(stancesRef, stances)
+          await update(stancesRef, allStances)
         } catch (error) {
           console.error('Error saving stances:', error)
         }
       }
     }
     saveStancesToFirebase()
-  }, [stances])
+  }, [allStances])
+
+  useEffect(() => {
+    const fetchCombatStyles = async () => {
+      try {
+        const response = await fetch('/combatStyles.json')
+        if (!response.ok) {
+          throw new Error(`Failed to fetch combat styles: ${response.status}`)
+        }
+        const data = await response.json()
+        setCombatStyles(data)
+      } catch (error) {
+        console.error('Error fetching combat styles:', error)
+        return null
+      }
+    }
+    fetchCombatStyles()
+  }, [])
 
   const contextValue: StanceContextProps = useMemo(() => {
     return {
-      stances,
-      setStances,
+      stances: allStances,
+      setStances: setAllStances as React.Dispatch<
+        React.SetStateAction<Record<string, number[]> | null>
+      >,
+      combatStyles: combatStyles,
     }
-  }, [stances, setStances])
+  }, [allStances, setAllStances, combatStyles])
 
   return (
     <StanceContext.Provider value={contextValue}>

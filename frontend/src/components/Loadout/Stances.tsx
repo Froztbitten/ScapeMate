@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   FormControl,
   FormGroup,
@@ -7,18 +7,10 @@ import {
   Typography,
 } from '@mui/material'
 import { useLoadout } from '@/context/LoadoutContext'
-import { useStances } from '@/context/StanceContext'
+import { useStances, Style } from '@/context/StanceContext'
 
 interface StancesProps {
   combatStyle: string
-}
-
-interface Style {
-  stance: string
-  attack_type: string
-  style: string | null
-  experience: string[]
-  boost: string | null
 }
 
 const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
@@ -28,44 +20,34 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
   const currentWeapon = getCurrentWeapon(combatStyle)
   const safeCombatStyle = combatStyle.toLowerCase()
 
-  const combatStyles = useMemo(() => {
-    const fetchCombatStyles = async () => {
-      try {
-        const response = await fetch('/combatStyles.json')
-        if (!response.ok) {
-          throw new Error(`Failed to fetch combat styles: ${response.status}`)
-        }
-        return await response.json()
-      } catch (error) {
-        console.error('Error fetching combat styles:', error)
-        return {}
-      }
-    }
-    return fetchCombatStyles()
-  }, [])
+  const { combatStyles } = useStances()
 
   useEffect(() => {
-    combatStyles.then(data => {
-      if (
-        currentWeapon.stats?.combatstyle &&
-        data[currentWeapon.stats.combatstyle]
-      ) {
-        const styles = data[currentWeapon.stats.combatstyle].styles
-        console.log(styles)
-        setStyles(styles)
-      }
-    })
-  }, [currentWeapon])
+    if (!combatStyles) return
+    if (
+      currentWeapon.stats?.combatstyle &&
+      combatStyles[currentWeapon.stats.combatstyle]
+    ) {
+      setStyles(combatStyles[currentWeapon.stats.combatstyle].styles)
+    }
+  }, [combatStyles, currentWeapon])
 
   const handleStanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = event.target
-    const currentStances = stances[safeCombatStyle] || []
+    const currentStances = stances?.[safeCombatStyle] || []
     const newValue = Number(value)
+    let updatedStances = [...currentStances]
 
-    const updatedStances = checked
-      ? [...currentStances, newValue]
-      : currentStances.filter((stance: number) => stance !== newValue)
-
+    if (checked) {
+      const insertIndex = newValue
+      updatedStances = [
+        ...updatedStances.slice(0, insertIndex),
+        newValue,
+        ...updatedStances.slice(insertIndex),
+      ]
+    } else {
+      updatedStances = updatedStances.filter(stance => stance !== newValue)
+    }
     setStances({ ...stances, [safeCombatStyle]: updatedStances })
   }
 
@@ -94,7 +76,7 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
             key={`${style.stance} ${index}`}
             control={
               <Checkbox
-                checked={stances[safeCombatStyle]?.includes(index) ?? false}
+                checked={stances?.[safeCombatStyle]?.includes(index) ?? false}
                 onChange={handleStanceChange}
                 value={index}
               />

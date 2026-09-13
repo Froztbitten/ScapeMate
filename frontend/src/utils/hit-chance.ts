@@ -40,6 +40,6 @@ export const calculateAttackRoll = (params: HitChanceParams): number => {
 }
 
 export const calculateDefenceRoll = (params: HitChanceParams): number => {
-  const { targetDefenceLevel, targetStyleDefenceBonus = 0 } = params
+  const { targetDefenceLevel = 1, targetStyleDefenceBonus = 0 } = params
   return (targetDefenceLevel + 9) * (targetStyleDefenceBonus + 64)
 }

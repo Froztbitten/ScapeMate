@@ -53,6 +53,11 @@ const MonsterAutocomplete: React.FC = () => {
       setSelectedMonster(selectedMonsters[0])
       if (selectedMonsters[0].selectedVariant) {
         setSelectedVariant(selectedMonsters[0].selectedVariant)
+      } else if (
+        selectedMonsters[0].variants &&
+        Object.keys(selectedMonsters[0].variants).length > 0
+      ) {
+        setSelectedVariant(Object.keys(selectedMonsters[0].variants)[0])
       }
     }
   }, [selectedMonsters])

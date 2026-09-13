@@ -12,14 +12,10 @@ import {
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import Select from '@mui/material/Select'
+import Select, { type SelectChangeEvent } from '@mui/material/Select'
 import { useMonsterData } from '@/context/TargetDataContext'
 
-interface Monster {
-  name: string
-  variants: { [key: string]: { [key: string]: any } }
-  selectedVariant: string | null
-}
+import type { Monster, MonsterVariant } from '@/utils/types'
 
 const MonsterAutocomplete: React.FC = () => {
   const { selectedMonsters, allMonsters, saveMonsterToRTDB } = useMonsterData()
@@ -28,7 +24,7 @@ const MonsterAutocomplete: React.FC = () => {
   const [monsterSubtitle, setMonsterSubtitle] = useState<string>('')
 
   const buildMonsterSubtitle = useCallback(
-    (monster: Monster | null, variantData: any) => {
+    (monster: Monster | null, variantData: MonsterVariant | undefined) => {
       if (!monster || !variantData) return ''
 
       const attribute = variantData.Monster_attribute
@@ -65,16 +61,27 @@ const MonsterAutocomplete: React.FC = () => {
   useEffect(() => {
     if (!selectedMonster) return
 
-    setMonsterSubtitle(buildMonsterSubtitle(selectedMonster, selectedVariant))
+    // `selectedVariant` is the variant's name; the subtitle needs its data.
+    setMonsterSubtitle(
+      buildMonsterSubtitle(
+        selectedMonster,
+        selectedVariant
+          ? selectedMonster.variants[selectedVariant]
+          : selectedMonster.variants['No variant']
+      )
+    )
   }, [selectedMonster, selectedVariant, buildMonsterSubtitle])
 
-  const handleChangeMonster = (_event: any, newValue: Monster | null) => {
+  const handleChangeMonster = (
+    _event: React.SyntheticEvent,
+    newValue: Monster | null
+  ) => {
     setSelectedMonster(newValue)
     setSelectedVariant(null)
     saveMonsterToRTDB(newValue)
   }
 
-  const handleChangeVariant = (event: any) => {
+  const handleChangeVariant = (event: SelectChangeEvent<string>) => {
     setSelectedVariant(event.target.value)
     if (selectedMonster) {
       const updatedMonster = {
@@ -98,13 +105,15 @@ const MonsterAutocomplete: React.FC = () => {
     ? selectedMonster?.variants[selectedMonster?.selectedVariant]
     : selectedMonster?.variants['No variant']
 
-  const getImage = (variantData: any) => {
+  const getImage = (variantData: MonsterVariant | undefined) => {
     if (!variantData) return undefined
     if (!variantData['Image']) return undefined
     return `https://oldschool.runescape.wiki/images/${variantData['Image']}`
   }
 
-  const getElementalWeaknessImage = (variantData: any): string => {
+  const getElementalWeaknessImage = (
+    variantData: MonsterVariant | undefined
+  ): string => {
     const weakness = variantData?.Elemental_weakness
 
     switch (weakness) {

@@ -47,7 +47,7 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
-            const loadedStances = snapshot.val() as Record<string, any>
+            const loadedStances = snapshot.val() as Record<string, unknown>
             const validStances: Record<string, number[]> = {}
             for (const key in loadedStances) {
               if (Array.isArray(loadedStances[key])) {

@@ -144,11 +144,13 @@ const StatsTable: React.FC = () => {
         </TableHead>
         <TableBody>
           {/* Dynamically create rows based on common keys across all stats */}
-          {Object.keys({
-            ...(combatStyleStats.melee?.totalBonuses ?? {}),
-            ...(combatStyleStats.ranged?.totalBonuses ?? {}),
-            ...(combatStyleStats.magic?.totalBonuses ?? {}),
-          }).map(stat => (
+          {(
+            Object.keys({
+              ...(combatStyleStats.melee?.totalBonuses ?? {}),
+              ...(combatStyleStats.ranged?.totalBonuses ?? {}),
+              ...(combatStyleStats.magic?.totalBonuses ?? {}),
+            }) as (keyof StatBonuses)[]
+          ).map(stat => (
             <TableRow key={stat}>
               <TableCell component='th' scope='row'>
                 {stat.replace(/_/g, ' ')}
@@ -156,17 +158,17 @@ const StatsTable: React.FC = () => {
               {/* Melee Stats */}
               <TableCell align='right'>
                 {combatStyleStats.melee?.totalBonuses &&
-                  (combatStyleStats.melee.totalBonuses as any)[stat]}
+                  combatStyleStats.melee.totalBonuses[stat]}
               </TableCell>
               {/* Ranged Stats */}
               <TableCell align='right'>
                 {combatStyleStats.ranged?.totalBonuses &&
-                  (combatStyleStats.ranged.totalBonuses as any)[stat]}
+                  combatStyleStats.ranged.totalBonuses[stat]}
               </TableCell>
               {/* Magic Stats */}
               <TableCell align='right'>
                 {combatStyleStats.magic?.totalBonuses &&
-                  (combatStyleStats.magic.totalBonuses as any)[stat]}
+                  combatStyleStats.magic.totalBonuses[stat]}
               </TableCell>
             </TableRow>
           ))}

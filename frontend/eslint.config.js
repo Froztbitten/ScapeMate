@@ -20,11 +20,6 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      // Tracked debt, not an endorsement. The 11 remaining `any`s all describe
-      // scraped OSRS Wiki infobox data (monster variants, item stats), which
-      // needs real interfaces rather than a blanket rule change. Kept as a
-      // warning so it stays visible in every lint run without blocking CI.
-      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },

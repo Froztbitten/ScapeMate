@@ -87,7 +87,10 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
     setSelectedItem(null)
   }
 
-  const handleSelect = (_event: any, value: Equipment | null) => {
+  const handleSelect = (
+    _event: React.SyntheticEvent,
+    value: Equipment | null
+  ) => {
     const newSelectedItems = { ...selectedItems }
     newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] =
       value || defaultItem

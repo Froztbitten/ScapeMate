@@ -11,11 +11,7 @@ import { ref, update, get } from 'firebase/database'
 import { database } from '@/utils/firebaseConfig'
 import { errorMessage } from '@/utils/types'
 
-interface Monster {
-  name: string
-  variants: { [key: string]: { [key: string]: any } }
-  selectedVariant: string | null
-}
+import type { Monster } from '@/utils/types'
 
 interface MonsterContextType {
   selectedMonsters: Monster[]

@@ -30,3 +30,11 @@ dist-ssr
 frontend/.firebase/hosting.*.cache
 
 .env*
+!.env.example
+
+# A vendored Node runtime was committed here once (an 87 MB Linux binary).
+frontend/node/
+
+# Python scraper virtualenvs / caches
+scripts/.venv/
+scripts/__pycache__/

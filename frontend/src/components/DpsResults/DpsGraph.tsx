@@ -43,7 +43,10 @@ const DpsGraph: React.FC = () => {
   useEffect(() => {
     if (!dpsParams || !hiscoresData || !selectedMonsters) return
 
-    const calculateLoadoutDps = (loadout: SelectedItems, combatStyle: string) => {
+    const calculateLoadoutDps = (
+      loadout: SelectedItems,
+      combatStyle: string
+    ) => {
       let attackLevel = 1
       let strengthLevel = 1
       let newEquipmentAttackBonus = 0
@@ -61,8 +64,15 @@ const DpsGraph: React.FC = () => {
       }
 
       Object.values(loadout).forEach(item => {
-        if (item.id !== -1 && item.id !== loadout['spec wep'].id && item.stats?.slot) {
-          if (loadout.weapon.stats?.slot !== '2h' || item.stats.slot !== 'shield') {
+        if (
+          item.id !== -1 &&
+          item.id !== loadout['spec wep'].id &&
+          item.stats?.slot
+        ) {
+          if (
+            loadout.weapon.stats?.slot !== '2h' ||
+            item.stats.slot !== 'shield'
+          ) {
             if (combatStyle === 'melee') {
               newEquipmentAttackBonus += item.stats.slash_attack ?? 0
               newEquipmentStrengthBonus += item.stats.melee_strength ?? 0
@@ -87,11 +97,15 @@ const DpsGraph: React.FC = () => {
         equipmentAttackBonus: newEquipmentAttackBonus,
         equipmentStrengthBonus: newEquipmentStrengthBonus,
         targetDefenceLevel: selectedMonsters[0]?.selectedVariant
-          ? Number(selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Defence_level)
+          ? Number(
+              selectedMonsters[0].variants[selectedMonsters[0].selectedVariant]
+                .Defence_level
+            )
           : 1,
         targetStyleDefenceBonus: selectedMonsters[0]?.selectedVariant
           ? Number(
-              selectedMonsters[0].variants[selectedMonsters[0].selectedVariant].Stab_defence_bonus
+              selectedMonsters[0].variants[selectedMonsters[0].selectedVariant]
+                .Stab_defence_bonus
             )
           : 1,
         attackSpeed: weaponAttackSpeed,
@@ -135,7 +149,13 @@ const DpsGraph: React.FC = () => {
             label: 'DPS',
           },
         ]}
-        xAxis={[{ scaleType: 'band', id: 'combatStyle', data: ['Melee', 'Ranged', 'Magic'] }]}
+        xAxis={[
+          {
+            scaleType: 'band',
+            id: 'combatStyle',
+            data: ['Melee', 'Ranged', 'Magic'],
+          },
+        ]}
       />
     </Box>
   )

@@ -1,5 +1,14 @@
 import React, { useState, MouseEvent } from 'react'
-import { Box, Button, Grid, Container, Popover, TextField, Stack, Divider } from '@mui/material'
+import {
+  Box,
+  Button,
+  Grid,
+  Container,
+  Popover,
+  TextField,
+  Stack,
+  Divider,
+} from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useItemData } from '@/context/ItemDataContext'
 import type { Equipment } from '@/utils/types'
@@ -21,7 +30,7 @@ interface EquipmentProps {
 }
 
 const filterItemsBySlot = (slot: string, allItems: ItemsData): Equipment[] => {
-  let labels = [slot]
+  const labels = [slot]
   if (slot === 'weapon') {
     labels.push('2h')
   } else if (slot === 'spec wep') {
@@ -41,9 +50,15 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null)
   const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 })
 
-  const { selectedItems, setSelectedItems, saveLoadoutToFirebase, resetLoadout } = useLoadout()
+  const {
+    selectedItems,
+    setSelectedItems,
+    saveLoadoutToFirebase,
+    resetLoadout,
+  } = useLoadout()
 
-  const combatStyleLower = combatStyle.toLowerCase() as keyof typeof selectedItems
+  const combatStyleLower =
+    combatStyle.toLowerCase() as keyof typeof selectedItems
 
   const currentSelectedItems: SelectedItems =
     selectedItems[combatStyleLower] || initialEquipmentState
@@ -74,7 +89,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
 
   const handleSelect = (_event: any, value: Equipment | null) => {
     const newSelectedItems = { ...selectedItems }
-    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] = value || defaultItem
+    newSelectedItems[combatStyleLower][activeSlot as EquipmentSlot] =
+      value || defaultItem
     setSelectedItems(newSelectedItems)
     setSelectedItem(null)
     setSlotFilter(Object.values(items.allItems))
@@ -106,8 +122,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             Clear
           </Button>
         </Grid>
-        
-        <Divider sx={{width: '100%'}}/>
+
+        <Divider sx={{ width: '100%' }} />
       </Grid>
       <Box sx={{ maxWidth: '350px', paddingY: '20px' }}>
         <Grid container spacing={2} justifyContent={'center'}>
@@ -190,7 +206,8 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
         sx={{
           top: dialogPosition.y,
           left: dialogPosition.x,
-        }}>
+        }}
+      >
         <Autocomplete
           autoHighlight
           id='item-combobox'
@@ -200,8 +217,12 @@ const Equipment: React.FC<EquipmentProps> = ({ combatStyle }) => {
             width: 300,
           }}
           value={selectedItem?.id != -1 ? selectedItem : null}
-          getOptionLabel={(option: Equipment) => option.name + ' (id:' + option.id.toString() + ')'}
-          renderInput={params => <TextField {...params} placeholder='Start typing' />}
+          getOptionLabel={(option: Equipment) =>
+            option.name + ' (id:' + option.id.toString() + ')'
+          }
+          renderInput={params => (
+            <TextField {...params} placeholder='Start typing' />
+          )}
         />
       </Popover>
     </Container>

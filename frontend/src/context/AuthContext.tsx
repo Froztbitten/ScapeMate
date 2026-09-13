@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from 'react'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/utils/firebaseConfig' // Adjust path if needed
 
@@ -47,5 +54,9 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     [user, loading]
   )
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  )
 }

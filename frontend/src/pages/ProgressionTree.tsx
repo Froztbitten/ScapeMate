@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { Box, } from '@mui/material'
+import { Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import NodeEditBox from '@/components/ProgressionTree/NodeEditBox'
 
@@ -60,19 +60,30 @@ const ProgressionTree: React.FC = () => {
   }, [])
 
   // Helper function to find the nearest available grid spot
-  const findNearestAvailableSpot = (targetX: number, targetY: number, currentNodes: Node[]): { x: number; y: number } => {
+  const findNearestAvailableSpot = (
+    targetX: number,
+    targetY: number,
+    currentNodes: Node[]
+  ): { x: number; y: number } => {
     let bestSpot = { x: targetX, y: targetY }
     let bestDistance = Infinity
 
     // Check if the exact spot is available first
     const isSpotOccupied = currentNodes.some(
-      (node) => node.x === bestSpot.x && node.y === bestSpot.y && node.id !== selectedNode?.id
+      node =>
+        node.x === bestSpot.x &&
+        node.y === bestSpot.y &&
+        node.id !== selectedNode?.id
     )
 
     if (!isSpotOccupied) return bestSpot
 
     // Otherwise check all spots around until we find one.
-    for (let radius = gridSize; radius <= canvasWidth && radius <= canvasHeight; radius += gridSize) {
+    for (
+      let radius = gridSize;
+      radius <= canvasWidth && radius <= canvasHeight;
+      radius += gridSize
+    ) {
       for (let x = targetX - radius; x <= targetX + radius; x += gridSize) {
         for (let y = targetY - radius; y <= targetY + radius; y += gridSize) {
           if (x < 0 || x > canvasWidth || y < 0 || y > canvasHeight) continue
@@ -80,11 +91,16 @@ const ProgressionTree: React.FC = () => {
           const spot = { x, y }
 
           const isOccupied = currentNodes.some(
-            (node) => node.x === spot.x && node.y === spot.y && node.id !== selectedNode?.id
+            node =>
+              node.x === spot.x &&
+              node.y === spot.y &&
+              node.id !== selectedNode?.id
           )
 
           if (!isOccupied) {
-            const distance = Math.sqrt((spot.x - targetX) ** 2 + (spot.y - targetY) ** 2)
+            const distance = Math.sqrt(
+              (spot.x - targetX) ** 2 + (spot.y - targetY) ** 2
+            )
             if (distance < bestDistance) {
               bestDistance = distance
               bestSpot = spot
@@ -97,7 +113,6 @@ const ProgressionTree: React.FC = () => {
 
     return bestSpot
   }
-
 
   // Draw nodes and background
   const draw = useCallback(() => {
@@ -139,7 +154,7 @@ const ProgressionTree: React.FC = () => {
     }
 
     // Draw nodes
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       // Draw square node
       const nodeSize = node.size
       const nodeX = node.x - canvasOffset.x - nodeSize / 2
@@ -157,7 +172,14 @@ const ProgressionTree: React.FC = () => {
       ctx.textBaseline = 'middle'
       ctx.fillText(node.text, nodeX + nodeSize / 2, nodeY + nodeSize / 2)
     })
-  }, [nodes, canvasOffset, hoverPosition, selectedNode, canvasWidth, canvasHeight])
+  }, [
+    nodes,
+    canvasOffset,
+    hoverPosition,
+    selectedNode,
+    canvasWidth,
+    canvasHeight,
+  ])
 
   useEffect(() => {
     draw()
@@ -180,7 +202,7 @@ const ProgressionTree: React.FC = () => {
     setLastMousePosition({ x: mouseX, y: mouseY })
 
     // Check if a node is clicked
-    const clickedNode = nodes.find((node) => {
+    const clickedNode = nodes.find(node => {
       const drawX = node.x - canvasOffset.x
       const drawY = node.y - canvasOffset.y
       const nodeHalfSize = node.size / 2 // Calculate half the size for square
@@ -217,7 +239,7 @@ const ProgressionTree: React.FC = () => {
     const deltaY = mouseY - lastMousePosition.y
 
     if (isDragging) {
-      setCanvasOffset((prevOffset) => ({
+      setCanvasOffset(prevOffset => ({
         x: prevOffset.x - deltaX,
         y: prevOffset.y - deltaY,
       }))
@@ -233,14 +255,18 @@ const ProgressionTree: React.FC = () => {
       const snappedY = Math.round(newY / gridSize) * gridSize
 
       // Find the closest available spot.
-      const { x: finalX, y: finalY } = findNearestAvailableSpot(snappedX, snappedY, nodes)
+      const { x: finalX, y: finalY } = findNearestAvailableSpot(
+        snappedX,
+        snappedY,
+        nodes
+      )
 
       // Update the hover position
       setHoverPosition({ x: finalX, y: finalY })
 
       // Update the nodes position to follow the cursor.
-      setNodes((prevNodes) =>
-        prevNodes.map((node) =>
+      setNodes(prevNodes =>
+        prevNodes.map(node =>
           node.id === selectedNode.id ? { ...node, x: newX, y: newY } : node
         )
       )
@@ -263,8 +289,8 @@ const ProgressionTree: React.FC = () => {
         hoverPosition!.y,
         nodes
       )
-      setNodes((prevNodes) =>
-        prevNodes.map((node) =>
+      setNodes(prevNodes =>
+        prevNodes.map(node =>
           node.id === selectedNode.id ? { ...node, x: finalX, y: finalY } : node
         )
       )
@@ -280,7 +306,7 @@ const ProgressionTree: React.FC = () => {
     const mouseY = event.clientY - rect.top
 
     // Check if a node is double-clicked
-    const doubleClickedNode = nodes.find((node) => {
+    const doubleClickedNode = nodes.find(node => {
       const drawX = node.x - canvasOffset.x
       const drawY = node.y - canvasOffset.y
       const nodeHalfSize = node.size / 2
@@ -304,9 +330,11 @@ const ProgressionTree: React.FC = () => {
   const handleEditTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEditText(event.target.value)
     if (editingNode) {
-      setNodes((prevNodes) =>
-        prevNodes.map((node) =>
-          node.id === editingNode.id ? { ...node, text: event.target.value } : node
+      setNodes(prevNodes =>
+        prevNodes.map(node =>
+          node.id === editingNode.id
+            ? { ...node, text: event.target.value }
+            : node
         )
       )
     }
@@ -315,8 +343,8 @@ const ProgressionTree: React.FC = () => {
   const handleNodeSizeChange = (_event: Event, newValue: number) => {
     setNodeSize(newValue)
 
-    setNodes((prevNodes) =>
-      prevNodes.map((node) =>
+    setNodes(prevNodes =>
+      prevNodes.map(node =>
         node.id === editingNode?.id ? { ...node, size: newValue } : node
       )
     )
@@ -338,7 +366,7 @@ const ProgressionTree: React.FC = () => {
     const mouseX = event.clientX - rect.left
     const mouseY = event.clientY - rect.top
 
-    return nodes.some((node) => {
+    return nodes.some(node => {
       const drawX = node.x - canvasOffset.x
       const drawY = node.y - canvasOffset.y
       const nodeHalfSize = node.size / 2

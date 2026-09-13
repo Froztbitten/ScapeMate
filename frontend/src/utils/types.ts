@@ -34,3 +34,10 @@ export interface ItemDataContextState {
   isLoading: boolean
   error: Error | null
 }
+
+/**
+ * Narrow an unknown caught value to a message. `catch` bindings are `unknown`,
+ * and anything can be thrown, so this is the safe way to read `.message`.
+ */
+export const errorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err)

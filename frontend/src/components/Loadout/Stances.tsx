@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { FormControl, FormGroup, FormControlLabel, Checkbox, Typography } from '@mui/material'
+import {
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Typography,
+} from '@mui/material'
 import { useLoadout } from '@/context/LoadoutContext'
 import { useStances } from '@/context/StanceContext'
 
@@ -40,8 +46,11 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
 
   useEffect(() => {
     combatStyles.then(data => {
-      if (currentWeapon.stats?.combatstyle && data[currentWeapon.stats.combatstyle]) {
-        let styles = data[currentWeapon.stats.combatstyle].styles
+      if (
+        currentWeapon.stats?.combatstyle &&
+        data[currentWeapon.stats.combatstyle]
+      ) {
+        const styles = data[currentWeapon.stats.combatstyle].styles
         console.log(styles)
         setStyles(styles)
       }
@@ -61,9 +70,10 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
   }
 
   if (!currentWeapon || currentWeapon.id === -1) {
-    return (<Typography variant='body1'>
-      Please select a weapon to view attack styles.
-    </Typography>
+    return (
+      <Typography variant='body1'>
+        Please select a weapon to view attack styles.
+      </Typography>
     )
   }
 
@@ -75,26 +85,26 @@ const Stances: React.FC<StancesProps> = ({ combatStyle }) => {
     )
   }
 
-  return (<FormControl component='fieldset'>
-    <Typography variant='h6'>Attack Styles</Typography>
-    <FormGroup>
-      {styles.map((style, index) => (
-        <FormControlLabel
-          key={`${style.stance} ${index}`}
-          control={
-            <Checkbox
-              checked={
-                stances[safeCombatStyle]?.includes(index) ?? false
-              }
-              onChange={handleStanceChange}
-              value={index}
-            />
-          }
-          label={`${style.stance} (${style.attack_type} - ${style.style})`}
-        />
-      ))}
-    </FormGroup>
-  </FormControl>)
+  return (
+    <FormControl component='fieldset'>
+      <Typography variant='h6'>Attack Styles</Typography>
+      <FormGroup>
+        {styles.map((style, index) => (
+          <FormControlLabel
+            key={`${style.stance} ${index}`}
+            control={
+              <Checkbox
+                checked={stances[safeCombatStyle]?.includes(index) ?? false}
+                onChange={handleStanceChange}
+                value={index}
+              />
+            }
+            label={`${style.stance} (${style.attack_type} - ${style.style})`}
+          />
+        ))}
+      </FormGroup>
+    </FormControl>
+  )
 }
 
 export default Stances

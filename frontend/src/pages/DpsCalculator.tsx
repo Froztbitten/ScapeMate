@@ -37,7 +37,8 @@ const SidePanel: React.FC<SidePanelProps> = ({
         overflow: 'hidden',
         ...(side === 'left' && { borderRight: '1px solid #ccc' }),
         ...(side === 'right' && { borderLeft: '1px solid #ccc' }),
-      }}>
+      }}
+    >
       <Button
         onClick={onToggle}
         sx={{
@@ -48,7 +49,8 @@ const SidePanel: React.FC<SidePanelProps> = ({
           transition: 'width 0.3s ease-in-out',
           ...(side === 'left' && { justifyContent: 'end' }),
           ...(side === 'right' && { justifyContent: 'start' }),
-        }}>
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -56,7 +58,8 @@ const SidePanel: React.FC<SidePanelProps> = ({
             overflowY: 'clip',
             width: open ? '100%' : '0px',
             justifyContent: side === 'left' ? 'flex-end' : 'flex-start',
-          }}>
+          }}
+        >
           {side === 'right' && (open ? <ChevronRight /> : <ChevronLeft />)}
           {open && <Typography>{title}</Typography>}
           {side === 'left' && (!open ? <ChevronRight /> : <ChevronLeft />)}
@@ -69,7 +72,8 @@ const SidePanel: React.FC<SidePanelProps> = ({
           overflowY: 'auto',
           display: open ? 'block' : 'none',
           height: '100%',
-        }}>
+        }}
+      >
         {content}
       </Box>
     </Box>
@@ -96,7 +100,8 @@ const DataVisualizationLayout: React.FC = () => {
         display: 'flex',
         width: '100%',
         height: '100%',
-      }}>
+      }}
+    >
       <SidePanel
         title='Equipment'
         open={leftPanelOpen}
@@ -115,7 +120,8 @@ const DataVisualizationLayout: React.FC = () => {
           flexGrow: 1,
           overflow: 'auto',
           transition: 'margin 0.3s ease-in-out',
-        }}>
+        }}
+      >
         <DpsGraph />
         <StatsTable />
       </Box>

@@ -14,7 +14,7 @@ interface NodeEditBoxProps {
 }
 
 const StyledEditBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isOpen',
+  shouldForwardProp: prop => prop !== 'isOpen',
 })<{ isOpen: boolean }>(({ theme, isOpen }) => ({
   position: 'absolute',
   top: 0,
@@ -46,20 +46,23 @@ const NodeEditBox: React.FC<NodeEditBoxProps> = ({
   nodeSize,
   isOpen,
 }) => {
-
   return (
-    <StyledEditBox
-      isOpen={isOpen}>
+    <StyledEditBox isOpen={isOpen}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-        <IconButton onClick={() => handleCloseEdit(false)} size="small">
+        <IconButton onClick={() => handleCloseEdit(false)} size='small'>
           <CloseIcon sx={{ color: '#fff' }} />
         </IconButton>
       </Box>
       <TextField
         value={editText}
         onChange={handleEditTextChange}
-        size="small"
-        sx={{ mb: 2, backgroundColor: '#fff', borderRadius: '5px', width: '100%' }}
+        size='small'
+        sx={{
+          mb: 2,
+          backgroundColor: '#fff',
+          borderRadius: '5px',
+          width: '100%',
+        }}
       />
       <Slider
         value={nodeSize}
@@ -67,8 +70,8 @@ const NodeEditBox: React.FC<NodeEditBoxProps> = ({
         min={gridSize}
         max={gridSize * 10}
         step={gridSize}
-        valueLabelDisplay="auto"
-        aria-label="Node Size"
+        valueLabelDisplay='auto'
+        aria-label='Node Size'
         sx={{ width: '100%' }}
       />
     </StyledEditBox>

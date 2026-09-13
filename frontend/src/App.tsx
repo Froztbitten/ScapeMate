@@ -1,4 +1,11 @@
-import { SetStateAction, Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import {
+  SetStateAction,
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   AppBar,
   Toolbar,
@@ -84,32 +91,16 @@ function App() {
         <AppBar position='sticky'>
           <Toolbar>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button
-                component={NavLink}
-                to='/'
-                sx={navLinkSx}
-              >
+              <Button component={NavLink} to='/' sx={navLinkSx}>
                 Home
               </Button>
-              <Button
-                component={NavLink}
-                to='/dps-calculator'
-                sx={navLinkSx}
-              >
+              <Button component={NavLink} to='/dps-calculator' sx={navLinkSx}>
                 DPS Calculator
               </Button>
-              <Button
-                component={NavLink}
-                to='/item-search'
-                sx={navLinkSx}
-              >
+              <Button component={NavLink} to='/item-search' sx={navLinkSx}>
                 Equipment Search
               </Button>
-              <Button
-                component={NavLink}
-                to='/progression-tree'
-                sx={navLinkSx}
-              >
+              <Button component={NavLink} to='/progression-tree' sx={navLinkSx}>
                 Map
               </Button>
             </Box>
@@ -126,7 +117,8 @@ function App() {
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: 'auto',
-              }}>
+              }}
+            >
               {currentUser ? (
                 <>
                   <Tooltip title={currentUser.email ?? ''}>

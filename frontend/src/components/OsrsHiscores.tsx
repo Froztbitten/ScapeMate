@@ -1,9 +1,17 @@
 import React from 'react'
-import { Box, Button, Container, TextField, Typography, CircularProgress } from '@mui/material'
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  CircularProgress,
+} from '@mui/material'
 import { useHiscores } from '@/context/HiscoresContext'
 
 function OsrsHiscores() {
-  const { playerName, setPlayerName, fetchHiscores, isLoading, error } = useHiscores()
+  const { playerName, setPlayerName, fetchHiscores, isLoading, error } =
+    useHiscores()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPlayerName(event.target.value)
@@ -35,8 +43,13 @@ function OsrsHiscores() {
             disabled={isLoading || !playerName.trim()}
             sx={{
               height: 'auto%',
-            }}>
-            {isLoading ? <CircularProgress size={24} color='inherit' /> : 'Lookup'}
+            }}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color='inherit' />
+            ) : (
+              'Lookup'
+            )}
           </Button>
         </Box>
         {error && <Typography color='error'>{error}</Typography>}

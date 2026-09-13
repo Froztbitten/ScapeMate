@@ -112,8 +112,8 @@
         "damage_boost_per_piece_percent": 2.5,
         "set_bonus_accuracy_percent": 10,
         "set_bonus_damage_percent": 5,
-        "total_set_accuracy_percent": 25, /* 3*5 + 10 */
-        "total_set_damage_percent": 12.5, /* 3*2.5 + 5 */
+        "total_set_accuracy_percent": 25 /* 3*5 + 10 */,
+        "total_set_damage_percent": 12.5 /* 3*2.5 + 5 */,
         "weapon_requirement": "Crystal bow or Blade of Saeldor/Bow of Faerdhinen"
       }
     },
@@ -197,7 +197,7 @@
       "name": "Staff of the Dead",
       "effect": "Has a chance to save runes when casting combat spells (excluding built-in Magic Dart).",
       "details": {
-        "chance_percent": 14.28, /* 1/7 */
+        "chance_percent": 14.28 /* 1/7 */,
         "notes": "Also provides +15% Melee damage bonus."
       }
     },
@@ -205,7 +205,7 @@
       "name": "Toxic Staff of the Dead",
       "effect": "Has a chance to save runes when casting combat spells (excluding built-in Magic Dart).",
       "details": {
-        "chance_percent": 14.28, /* 1/7 */
+        "chance_percent": 14.28 /* 1/7 */,
         "notes": "Also provides +15% Melee damage bonus."
       }
     },
@@ -213,7 +213,7 @@
       "name": "Serpentine Helm",
       "effect": "Has a chance to inflict venom on targets when attacking with Melee.",
       "details": {
-        "chance_percent": 16.67, /* 1/6 */
+        "chance_percent": 16.67 /* 1/6 */,
         "notes": "Also provides immunity to poison and venom."
       }
     },
@@ -221,7 +221,7 @@
       "name": "Toxic Blowpipe",
       "effect": "Uses darts as ammo with rapid attack speed. Has a chance to inflict venom. Damage scales with dart tier and Ranged Strength bonus.",
       "details": {
-        "venom_chance_percent": 25, /* When charged with scales */
+        "venom_chance_percent": 25 /* When charged with scales */,
         "notes": "Consumes Zulrah's scales per shot."
       }
     },
@@ -247,7 +247,7 @@
       "name": "Sanguinesti Staff",
       "effect": "Casts its own built-in magic spell. Has a chance to heal the wielder on a successful hit.",
       "details": {
-        "heal_chance_percent": 16.67, /* 1/6 */
+        "heal_chance_percent": 16.67 /* 1/6 */,
         "heal_amount_percent_of_damage": 50,
         "notes": "Consumes charges and blood runes per cast."
       }
@@ -258,10 +258,8 @@
       "details": {
         "max_hits": 3,
         "hit_damage_percent": [
-          100,
-          50,
-          25
-        ], /* Percent of max hit for 1st, 2nd, 3rd splat */
+          100, 50, 25
+        ] /* Percent of max hit for 1st, 2nd, 3rd splat */,
         "notes": "Consumes charges and blood runes per swing."
       }
     },
@@ -302,9 +300,9 @@
       "name": "Masori Armor (f) Set (Helm, Body, Legs)",
       "effect": "Each piece provides Ranged Accuracy, Ranged Strength, and Prayer bonus. Fortified version adds significant Defence bonuses. Set effect with Assembler increases Ranged Accuracy and Damage. Has ammo-saving chance.",
       "details": {
-        "ranged_accuracy_per_piece": "+12/+20/+16", /* Helm/Body/Legs */
-        "ranged_strength_per_piece_percent": "2/4/3", /* Helm/Body/Legs */
-        "ammo_save_chance_total_set_percent": 10, /* Approximation, depends on Ava's device used */
+        "ranged_accuracy_per_piece": "+12/+20/+16" /* Helm/Body/Legs */,
+        "ranged_strength_per_piece_percent": "2/4/3" /* Helm/Body/Legs */,
+        "ammo_save_chance_total_set_percent": 10 /* Approximation, depends on Ava's device used */,
         "set_bonus_with_assembler_accuracy_percent": 10,
         "set_bonus_with_assembler_damage_percent": 3,
         "set_bonus_requirement": "Masori helm (f), Masori body (f), Masori chaps (f), Ava's Assembler"
@@ -314,7 +312,7 @@
       "name": "Torva Armour Set (Helm, Body, Legs)",
       "effect": "Each piece provides high Strength bonus. Set effect increases Max Hit based on missing Prayer points when praying.",
       "details": {
-        "strength_bonus_total": 14, /* +4/+6/+4 */
+        "strength_bonus_total": 14 /* +4/+6/+4 */,
         "max_hit_increase_per_missing_prayer_point_percent": 0.5,
         "max_hit_increase_cap_percent": 8,
         "set_bonus_requirement": "Torva full helm, Torva platebody, Torva platelegs",
@@ -325,7 +323,7 @@
       "name": "Virtus Robes Set (Mask, Top, Bottom)",
       "effect": "Each piece provides passive Magic Damage bonus. Set effect increases damage of Ancient Magicks spells by 10% and has a chance to save runes when casting them.",
       "details": {
-        "magic_damage_per_piece_percent": 4, /* Mask/Top/Bottom */
+        "magic_damage_per_piece_percent": 4 /* Mask/Top/Bottom */,
         "total_magic_damage_percent": 12,
         "ancient_magicks_damage_boost_percent": 10,
         "ancient_magicks_rune_save_chance_percent": 15,

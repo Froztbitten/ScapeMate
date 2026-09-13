@@ -24,7 +24,7 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
   if (items.allItems) {
     imageUrl =
       selectedItem.id !== -1 && items.allItems[selectedItem.id]
-        ? items.allItems[selectedItem.id].image_url ?? ''
+        ? (items.allItems[selectedItem.id].image_url ?? '')
         : ''
   }
 
@@ -47,7 +47,8 @@ const EquipmentButton: React.FC<EquipmentButtonProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
           },
-        }}>
+        }}
+      >
         {selectedItem.id !== -1 && (
           <Box
             component='img'

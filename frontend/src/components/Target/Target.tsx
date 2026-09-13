@@ -33,7 +33,7 @@ const MonsterAutocomplete: React.FC = () => {
 
       const attribute = variantData.Monster_attribute
       const size = variantData.Size
-      let subtitleParts: string[] = []
+      const subtitleParts: string[] = []
 
       if (attribute) {
         subtitleParts.push(attribute)
@@ -130,34 +130,43 @@ const MonsterAutocomplete: React.FC = () => {
         onChange={handleChangeMonster}
         value={selectedMonster?.name ? selectedMonster : null}
         renderInput={params => (
-          <TextField {...params} label='Search for a Monster' variant='outlined' />
+          <TextField
+            {...params}
+            label='Search for a Monster'
+            variant='outlined'
+          />
         )}
       />
 
-      {selectedMonster && variantOptionsArray.length > 1 && !isSingleNoVariant && (
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel id='variant-select-label'>Variant</InputLabel>
-          <Select
-            labelId='variant-select-label'
-            id='variant-select'
-            value={selectedVariant ?? ''}
-            label='Variant'
-            onChange={handleChangeVariant}>
-            {variantOptionsArray.map(variant => (
-              <MenuItem key={variant} value={variant}>
-                {variant}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
+      {selectedMonster &&
+        variantOptionsArray.length > 1 &&
+        !isSingleNoVariant && (
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel id='variant-select-label'>Variant</InputLabel>
+            <Select
+              labelId='variant-select-label'
+              id='variant-select'
+              value={selectedVariant ?? ''}
+              label='Variant'
+              onChange={handleChangeVariant}
+            >
+              {variantOptionsArray.map(variant => (
+                <MenuItem key={variant} value={variant}>
+                  {variant}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
       {selectedMonster && variantData && (
         <Box mt={3}>
           <Typography variant='h4' component='h2'>
             {selectedMonster.name}
           </Typography>
-          {monsterSubtitle && <Typography variant='subtitle1'>{monsterSubtitle}</Typography>}
+          {monsterSubtitle && (
+            <Typography variant='subtitle1'>{monsterSubtitle}</Typography>
+          )}
           {getImage(variantData) && (
             <img
               src={getImage(variantData)}
@@ -165,13 +174,15 @@ const MonsterAutocomplete: React.FC = () => {
               style={{ width: '200px', height: '200px', objectFit: 'contain' }}
             />
           )}
-          {!isSingleNoVariant && selectedVariant && <h3>Variant: {selectedVariant}</h3>}
+          {!isSingleNoVariant && selectedVariant && (
+            <h3>Variant: {selectedVariant}</h3>
+          )}
 
           <Grid container spacing={2}>
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Hitpoints' placement="top">
+                  <Tooltip title='Hitpoints' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/1/1e/Hitpoints_icon.png?4a6a9'
@@ -189,7 +200,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Defence Level' placement="top">
+                  <Tooltip title='Defence Level' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Defence_icon.png?ca0cd'
@@ -198,7 +209,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Defence_level ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Defence_level ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -207,7 +220,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Magic Level' placement="top">
+                  <Tooltip title='Magic Level' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Magic_icon.png?334cf'
@@ -216,7 +229,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Magic_level ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Magic_level ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -226,7 +241,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Stab Defence' placement="top">
+                  <Tooltip title='Stab Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/White_dagger.png?db3e5'
@@ -235,7 +250,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Stab_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Stab_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -244,7 +261,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Slash Defence' placement="top">
+                  <Tooltip title='Slash Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/White_scimitar.png?2dc8c'
@@ -253,7 +270,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Slash_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Slash_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -262,7 +281,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Crush Defence' placement="top">
+                  <Tooltip title='Crush Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/White_warhammer.png?2ff77'
@@ -271,7 +290,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Crush_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Crush_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -281,7 +302,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Light Range Defence' placement="top">
+                  <Tooltip title='Light Range Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Steel_dart.png?3203e'
@@ -290,7 +311,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Light_range_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Light_range_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -299,7 +322,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Standard Range Defence' placement="top">
+                  <Tooltip title='Standard Range Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Steel_arrow_5.png?2c4a2'
@@ -308,7 +331,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Standard_range_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Standard_range_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -317,7 +342,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Heavy Range Defence' placement="top">
+                  <Tooltip title='Heavy Range Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Steel_bolts_5.png?f1c11'
@@ -326,7 +351,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Heavy_range_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Heavy_range_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -337,7 +364,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Magic Defence' placement="top">
+                  <Tooltip title='Magic Defence' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src='https://oldschool.runescape.wiki/images/Magic_defence_icon.png?65b01'
@@ -346,7 +373,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Magic_defence_bonus ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Magic_defence_bonus ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>
@@ -355,7 +384,7 @@ const MonsterAutocomplete: React.FC = () => {
             <Grid size={4}>
               <Card>
                 <CardContent>
-                  <Tooltip title='Elemental Weakness (%)' placement="top">
+                  <Tooltip title='Elemental Weakness (%)' placement='top'>
                     <Grid container alignItems='center' justifyContent='center'>
                       <img
                         src={dynamicElementalWeaknessImage}
@@ -364,7 +393,9 @@ const MonsterAutocomplete: React.FC = () => {
                           marginRight: '5px',
                         }}
                       />
-                      <Typography>{variantData.Elemental_weakness_percent ?? 'N/A'}</Typography>
+                      <Typography>
+                        {variantData.Elemental_weakness_percent ?? 'N/A'}
+                      </Typography>
                     </Grid>
                   </Tooltip>
                 </CardContent>

@@ -156,45 +156,50 @@ export const palettes: Record<string, ThemeOptions> = {
     },
   },
   'Lo-fi Hip Hop Beats': {
-      palette: {
-          mode: 'dark', // Definitely dark mode
-          primary: { // Muted teal/cyan
-              main: teal[700],
-              light: teal[500],
-              dark: teal[900],
-              contrastText: '#ffffff',
-          },
-          secondary: { // Soft, muted purple
-              main: deepPurple[400],
-              light: deepPurple[200],
-              dark: deepPurple[600],
-              contrastText: '#ffffff',
-          },
-          background: { // Very dark, slightly desaturated purple/blue
-              default: '#1a1a2e', // Custom dark blue/purple
-              paper: '#2a2a4e', // Slightly lighter paper background
-          },
-          text: { // Off-white, maybe slightly warm
-              primary: grey[200], // Brighter than default dark text
-              secondary: grey[400],
-              disabled: grey[600],
-          },
-          divider: blueGrey[700], // Subtle dark divider
-          action: { // Use primary/secondary variants
-              active: teal[500],
-              hover: 'rgba(0, 121, 107, 0.15)', // teal[700] hover, slightly more visible
-              selected: 'rgba(0, 121, 107, 0.25)', // teal[700] selected, slightly more visible
-              disabled: grey[700],
-              disabledBackground: grey[800],
-          },
-          // Optional: Muted info/success/warning/error
-          info: { main: lightBlue[700] },
-          success: { main: green[800] },
-          warning: { main: orange[700] },
-          error: { main: pink[800] },
-          common: common,
-          grey: grey,
+    palette: {
+      mode: 'dark', // Definitely dark mode
+      primary: {
+        // Muted teal/cyan
+        main: teal[700],
+        light: teal[500],
+        dark: teal[900],
+        contrastText: '#ffffff',
       },
+      secondary: {
+        // Soft, muted purple
+        main: deepPurple[400],
+        light: deepPurple[200],
+        dark: deepPurple[600],
+        contrastText: '#ffffff',
+      },
+      background: {
+        // Very dark, slightly desaturated purple/blue
+        default: '#1a1a2e', // Custom dark blue/purple
+        paper: '#2a2a4e', // Slightly lighter paper background
+      },
+      text: {
+        // Off-white, maybe slightly warm
+        primary: grey[200], // Brighter than default dark text
+        secondary: grey[400],
+        disabled: grey[600],
+      },
+      divider: blueGrey[700], // Subtle dark divider
+      action: {
+        // Use primary/secondary variants
+        active: teal[500],
+        hover: 'rgba(0, 121, 107, 0.15)', // teal[700] hover, slightly more visible
+        selected: 'rgba(0, 121, 107, 0.25)', // teal[700] selected, slightly more visible
+        disabled: grey[700],
+        disabledBackground: grey[800],
+      },
+      // Optional: Muted info/success/warning/error
+      info: { main: lightBlue[700] },
+      success: { main: green[800] },
+      warning: { main: orange[700] },
+      error: { main: pink[800] },
+      common: common,
+      grey: grey,
+    },
   },
 }
 

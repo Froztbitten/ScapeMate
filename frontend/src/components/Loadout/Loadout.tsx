@@ -19,7 +19,8 @@ function TabPanel(props: Readonly<TabPanelProps>) {
       hidden={value !== index}
       id={`loadout-tabpanel-${index}`}
       aria-labelledby={`loadout-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {value === index && (
         <Box sx={{ p: 1 }}>
           <Typography>{children}</Typography>
@@ -40,9 +41,13 @@ function Loadout() {
   const [value, setValue] = useState(0)
   const combatStyleTabs = ['Melee', 'Ranged', 'Magic']
   const [combatStyle, setCombatStyle] = useState(combatStyleTabs[0])
-  const { saveCombatStyleToFirebase, loadCombatStyleFromFirebase } = useLoadout()
+  const { saveCombatStyleToFirebase, loadCombatStyleFromFirebase } =
+    useLoadout()
 
-  const handleChange = async (_event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = async (
+    _event: React.SyntheticEvent,
+    newValue: number
+  ) => {
     setValue(newValue)
     const newCombatStyle = combatStyleTabs[newValue]
     setCombatStyle(newCombatStyle)
@@ -52,7 +57,11 @@ function Loadout() {
   useEffect(() => {
     const loadInitialCombatStyle = async () => {
       const initialStyle = await loadCombatStyleFromFirebase()
-      if (initialStyle !== null && initialStyle >= 0 && initialStyle < combatStyleTabs.length) {
+      if (
+        initialStyle !== null &&
+        initialStyle >= 0 &&
+        initialStyle < combatStyleTabs.length
+      ) {
         setValue(initialStyle)
         setCombatStyle(combatStyleTabs[initialStyle])
       }
@@ -68,12 +77,13 @@ function Loadout() {
             '.MuiTabs-indicator': {
               backgroundColor: 'white',
             },
-            color: 'white'
+            color: 'white',
           }}
           value={value}
           onChange={handleChange}
           aria-label='loadout tabs'
-          centered>
+          centered
+        >
           {combatStyleTabs.map((tabName, index) => (
             <Tab
               key={tabName}

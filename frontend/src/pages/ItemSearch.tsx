@@ -77,7 +77,8 @@ const ItemSearch: React.FC = () => {
           {filteredItems?.map(item => (
             <li
               key={item.id}
-              style={{ borderBottom: '1px solid #eee', padding: '8px 0' }}>
+              style={{ borderBottom: '1px solid #eee', padding: '8px 0' }}
+            >
               {/* Use optional chaining if properties might be missing */}
               <strong>{item.name}</strong> (ID: {item.id})
               {item.stats?.slot && <span> - Slot: {item.stats?.slot}</span>}

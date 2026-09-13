@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, useContext, useMemo } from 'react'
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from 'react'
 import { database } from '@/utils/firebaseConfig'
 import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
@@ -11,7 +17,9 @@ interface StanceContextProps {
 
 const StanceContext = createContext<StanceContextProps | undefined>(undefined)
 
-export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [stances, setStances] = useState<Record<string, number[]>>({})
 
   const { user, loading } = useContext(AuthContext)
@@ -19,7 +27,10 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const loadStancesFromFirebase = async () => {
       if (user && !loading) {
-        const stancesRef = ref(database, `players/${user.uid}/loadouts/default/stances`)
+        const stancesRef = ref(
+          database,
+          `players/${user.uid}/loadouts/default/stances`
+        )
         try {
           const snapshot = await get(stancesRef)
           if (snapshot.exists()) {
@@ -36,7 +47,10 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const saveStancesToFirebase = async () => {
       if (user) {
-        const stancesRef = ref(database, `players/${user.uid}/loadouts/default/stances`)
+        const stancesRef = ref(
+          database,
+          `players/${user.uid}/loadouts/default/stances`
+        )
         try {
           await update(stancesRef, stances)
         } catch (error) {
@@ -54,7 +68,11 @@ export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [stances, setStances])
 
-  return <StanceContext.Provider value={contextValue}>{children}</StanceContext.Provider>
+  return (
+    <StanceContext.Provider value={contextValue}>
+      {children}
+    </StanceContext.Provider>
+  )
 }
 
 export const useStances = () => {

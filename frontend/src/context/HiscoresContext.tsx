@@ -1,5 +1,12 @@
 // src/context/HiscoresContext.tsx
-import React, { createContext, useState, useEffect, useContext, useMemo, ReactNode } from 'react'
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  ReactNode,
+} from 'react'
 import axios from 'axios'
 import { ref, update, get } from 'firebase/database'
 import { database } from '@/utils/firebaseConfig'
@@ -165,13 +172,17 @@ interface HiscoresContextState {
   error: ErrorType
 }
 
-const HiscoresContext = createContext<HiscoresContextState | undefined>(undefined)
+const HiscoresContext = createContext<HiscoresContextState | undefined>(
+  undefined
+)
 
 interface HiscoresProviderProps {
   children: ReactNode
 }
 
-export const HiscoresProvider: React.FC<HiscoresProviderProps> = ({ children }) => {
+export const HiscoresProvider: React.FC<HiscoresProviderProps> = ({
+  children,
+}) => {
   const [playerName, setPlayerName] = useState<string>('')
   const [hiscoresData, setHiscoresData] = useState<Hiscores | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -186,7 +197,9 @@ export const HiscoresProvider: React.FC<HiscoresProviderProps> = ({ children }) 
     try {
       const playerRef = ref(database, `players/${user.uid}`)
       await update(playerRef, { name })
-      console.log(`Player name "${name}" saved to Firebase for user ${user.uid}.`)
+      console.log(
+        `Player name "${name}" saved to Firebase for user ${user.uid}.`
+      )
     } catch (err) {
       console.error('Error saving player name to Firebase:', err)
     }
@@ -285,7 +298,9 @@ export const HiscoresProvider: React.FC<HiscoresProviderProps> = ({ children }) 
           if (err.response.status === 404) {
             setError(`Player "${name}" not found on the Hiscores.`)
           } else {
-            setError(`Error: ${err.response.status} - ${err.response.statusText || 'Server Error'}`)
+            setError(
+              `Error: ${err.response.status} - ${err.response.statusText || 'Server Error'}`
+            )
           }
         } else if (err.request) {
           setError(
@@ -321,7 +336,11 @@ export const HiscoresProvider: React.FC<HiscoresProviderProps> = ({ children }) 
     [playerName, hiscoresData, isLoading, error]
   )
 
-  return <HiscoresContext.Provider value={contextValue}>{children}</HiscoresContext.Provider>
+  return (
+    <HiscoresContext.Provider value={contextValue}>
+      {children}
+    </HiscoresContext.Provider>
+  )
 }
 
 export const useHiscores = (): HiscoresContextState => {

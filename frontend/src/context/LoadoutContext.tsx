@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, useEffect, useMemo } from 'react'
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react'
 import { AuthContext } from '@/context/AuthContext'
 import { ref, update, get } from 'firebase/database'
 import { Equipment } from '@/utils/types'
@@ -54,7 +60,10 @@ interface LoadoutContextState {
       magic: SelectedItems
     }>
   >
-  saveLoadoutToFirebase: (loadout: SelectedItems, combatStyle: string) => Promise<void>
+  saveLoadoutToFirebase: (
+    loadout: SelectedItems,
+    combatStyle: string
+  ) => Promise<void>
   loadLoadoutFromFirebase: () => Promise<void>
   resetLoadout: (combatStyle: string) => void
   getCurrentWeapon: (combatStyle: string) => Equipment
@@ -64,7 +73,9 @@ interface LoadoutContextState {
 
 const LoadoutContext = createContext<LoadoutContextState | undefined>(undefined)
 
-export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [selectedItems, setSelectedItems] = useState<{
     melee: SelectedItems
     ranged: SelectedItems
@@ -85,7 +96,10 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return null
   }, [user])
 
-  const saveLoadoutToFirebase = async (loadout: SelectedItems, combatStyle: string) => {
+  const saveLoadoutToFirebase = async (
+    loadout: SelectedItems,
+    combatStyle: string
+  ) => {
     if (!user || !loadoutRef) {
       console.warn('User not logged in. Cannot save loadout.')
       return
@@ -100,7 +114,10 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     )
     try {
       await update(
-        ref(database, `players/${user.uid}/loadouts/default/${combatStyle.toLowerCase()}`),
+        ref(
+          database,
+          `players/${user.uid}/loadouts/default/${combatStyle.toLowerCase()}`
+        ),
         transformedLoadout
       )
     } catch (err) {
@@ -122,13 +139,22 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const newSelectedItems = { ...selectedItems }
 
         for (const combatStyle in loadedLoadout) {
-          if (combatStyle == 'melee' || combatStyle == 'ranged' || combatStyle == 'magic') {
+          if (
+            combatStyle == 'melee' ||
+            combatStyle == 'ranged' ||
+            combatStyle == 'magic'
+          ) {
             const newCombatStyleLoadout: SelectedItems = {
               ...initialEquipmentState,
             }
 
             for (const slot in initialEquipmentState) {
-              if (loadedLoadout[combatStyle].hasOwnProperty(slot)) {
+              if (
+                Object.prototype.hasOwnProperty.call(
+                  loadedLoadout[combatStyle],
+                  slot
+                )
+              ) {
                 const itemId = loadedLoadout[combatStyle][slot]
                 if (itemId && allItems[itemId]) {
                   const item = allItems[itemId]
@@ -201,7 +227,8 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }
 
   const getCurrentWeapon = (combatStyle: string): Equipment => {
-    const combatStyleItems = selectedItems[combatStyle.toLowerCase() as keyof typeof selectedItems]
+    const combatStyleItems =
+      selectedItems[combatStyle.toLowerCase() as keyof typeof selectedItems]
     if (!combatStyleItems) {
       return defaultItem
     }
@@ -236,7 +263,11 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadCombatStyleFromFirebase,
   ])
 
-  return <LoadoutContext.Provider value={contextValue}>{children}</LoadoutContext.Provider>
+  return (
+    <LoadoutContext.Provider value={contextValue}>
+      {children}
+    </LoadoutContext.Provider>
+  )
 }
 
 export const useLoadout = () => {

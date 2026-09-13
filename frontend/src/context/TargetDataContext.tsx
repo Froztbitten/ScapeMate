@@ -1,7 +1,15 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode, useMemo } from 'react'
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+  useMemo,
+} from 'react'
 import { AuthContext } from '@/context/AuthContext'
 import { ref, update, get } from 'firebase/database'
 import { database } from '@/utils/firebaseConfig'
+import { errorMessage } from '@/utils/types'
 
 interface Monster {
   name: string
@@ -41,7 +49,10 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
   const loadMonsterFromRTDB = async () => {
     if (!user || loading || !allMonsters.length) return
     try {
-      const monsterRef = ref(database, `players/${user.uid}/loadouts/default/monsters`)
+      const monsterRef = ref(
+        database,
+        `players/${user.uid}/loadouts/default/monsters`
+      )
       const snapshot = await get(monsterRef)
       if (snapshot.exists()) {
         const monsterId = snapshot.val()[0]
@@ -63,8 +74,8 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
           }
         }
       }
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(errorMessage(err))
     }
   }
 
@@ -87,7 +98,7 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
       monstersIds.push(monsterIdToSave)
 
       await update(monsterRef, { monsters: monstersIds })
-    } catch (err: any) {
+    } catch (err) {
       console.log(err)
     }
   }
@@ -101,8 +112,8 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
       }
       const data = await response.json()
       setAllMonsters(data)
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(errorMessage(err))
     } finally {
       setMonstersLoading(false)
     }
@@ -137,7 +148,9 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
     return <div>Error: {error}</div>
   }
 
-  return <MonsterContext.Provider value={value}>{children}</MonsterContext.Provider>
+  return (
+    <MonsterContext.Provider value={value}>{children}</MonsterContext.Provider>
+  )
 }
 
 const useMonsterData = (): MonsterContextType => {

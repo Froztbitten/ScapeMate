@@ -52,11 +52,14 @@ const StatsTable: React.FC = () => {
       magic?: CombatStyleStats
     } = {}
 
-    const processLoadout = (loadout: SelectedItems, styleName: 'melee' | 'ranged' | 'magic') => {
+    const processLoadout = (
+      loadout: SelectedItems,
+      styleName: 'melee' | 'ranged' | 'magic'
+    ) => {
       if (!loadout) return
 
       const newEquipment: Equipment[] = []
-      let newTotalBonuses: StatBonuses = {
+      const newTotalBonuses: StatBonuses = {
         attack_stab: 0,
         attack_slash: 0,
         attack_crush: 0,
@@ -90,7 +93,8 @@ const StatsTable: React.FC = () => {
             newTotalBonuses.defence_magic += itemData.stats.magic_defence ?? 0
             newTotalBonuses.defence_ranged += itemData.stats.ranged_defence ?? 0
             newTotalBonuses.melee_strength += itemData.stats.melee_strength ?? 0
-            newTotalBonuses.ranged_strength += itemData.stats.ranged_strength ?? 0
+            newTotalBonuses.ranged_strength +=
+              itemData.stats.ranged_strength ?? 0
             newTotalBonuses.magic_damage += itemData.stats.magic_damage ?? 0
             newTotalBonuses.prayer += itemData.stats.prayer ?? 0
           }
@@ -120,7 +124,8 @@ const StatsTable: React.FC = () => {
         sx={{ minWidth: 100 }}
         aria-label='combined attack stats table'
         size='small'
-        stickyHeader>
+        stickyHeader
+      >
         <TableHead>
           <TableRow>
             <TableCell>

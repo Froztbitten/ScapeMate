@@ -22,7 +22,10 @@ describe('calculateEffectiveStrengthLevel', () => {
   it('floors the prayer multiplier before adding bonuses', () => {
     // floor(99 * 1.23) = 121, not 121.77
     expect(
-      calculateEffectiveStrengthLevel({ ...base, strengthPrayerMultiplier: 1.23 })
+      calculateEffectiveStrengthLevel({
+        ...base,
+        strengthPrayerMultiplier: 1.23,
+      })
     ).toBe(132)
   })
 

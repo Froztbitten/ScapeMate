@@ -169,27 +169,47 @@ function ConnectPlugin() {
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant='h6' gutterBottom>
-          2. Status
+          2. Connection status
         </Typography>
-        {live ? (
-          <Stack spacing={1}>
-            <Typography variant='body2'>
-              Last update
-              {live.playerName ? ` from ${live.playerName}` : ''}:{' '}
-              {live.updatedAt
-                ? new Date(live.updatedAt).toLocaleString()
-                : 'unknown'}
-            </Typography>
-            <Typography variant='body2' color='text.secondary'>
-              {Object.keys(live.levels ?? {}).length} skills,{' '}
-              {(live.equipment ?? []).length} equipment slots
-            </Typography>
+        <Stack spacing={1.5}>
+          <Stack direction='row' spacing={1} alignItems='center'>
+            <Chip
+              size='small'
+              label={live ? 'Receiving data' : 'Waiting for first sync'}
+              color={live ? 'success' : 'default'}
+            />
+            {live?.playerName && (
+              <Typography variant='body2'>from {live.playerName}</Typography>
+            )}
           </Stack>
-        ) : (
-          <Typography variant='body2' color='text.secondary'>
-            Nothing received yet. Once the plugin syncs, it shows up here.
-          </Typography>
-        )}
+
+          {live ? (
+            <>
+              <Typography variant='body2'>
+                Last update:{' '}
+                {live.updatedAt
+                  ? new Date(live.updatedAt).toLocaleString()
+                  : 'unknown'}
+              </Typography>
+              <Typography variant='body2' color='text.secondary'>
+                {Object.keys(live.levels ?? {}).length} skills,{' '}
+                {(live.equipment ?? []).length} equipment slots
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography variant='body2' color='text.secondary'>
+                Pairing alone does not send anything. In RuneLite, open the
+                ScapeMate panel and check that all three rows are ticked, then
+                press <strong>Sync gear and levels now</strong>.
+              </Typography>
+              <Typography variant='body2' color='text.secondary'>
+                <strong>Test connection</strong> in that panel says whether the
+                plugin can reach the server at all.
+              </Typography>
+            </>
+          )}
+        </Stack>
       </Paper>
 
       {error && (

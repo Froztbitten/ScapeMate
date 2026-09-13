@@ -228,6 +228,24 @@ const register = app => {
     return res.json({ ok: true, combatStyle })
   })
 
+  /**
+   * Confirms a token works, without needing the player to be logged in or
+   * wearing anything. The plugin's "Test connection" button calls this, so a
+   * broken link can be told apart from a sync that had nothing to send.
+   */
+  app.post('/api/plugin/ping', async (req, res) => {
+    const uid = await resolvePluginToken(req)
+    if (!uid) {
+      return res.status(401).json({ error: 'Invalid or revoked plugin token.' })
+    }
+
+    const live = await db().ref(`players/${uid}/live`).get()
+    return res.json({
+      ok: true,
+      lastSyncAt: live.exists() ? live.val().updatedAt || null : null,
+    })
+  })
+
   /** Lets the webapp cut the plugin off without touching the database by hand. */
   app.post('/api/plugin/revoke', async (req, res) => {
     const uid = await requireWebUser(req)

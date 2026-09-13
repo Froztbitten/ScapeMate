@@ -5,15 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --mode development",
+    "dev:all": "concurrently --names \"web,api\" --prefix-colors \"cyan,magenta\" --kill-others-on-fail \"npm:dev\" \"npm:emulators\"",
+    "emulators": "cross-env NODE_ENV=development firebase emulators:start --only functions --project osrs-companion-app",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "lint": "eslint .",
+    "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "preview": "vite preview",
-    "deploy": "npm run build && firebase deploy --only hosting",
-    "format": "prettier --write ."
+    "deploy": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -38,6 +40,8 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^5.0.0",
+    "concurrently": "^9.2.4",
+    "cross-env": "^7.0.3",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-react-dom": "^1.40.1",

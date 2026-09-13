@@ -87,3 +87,63 @@ test('sync payload rejects empty or junk bodies', () => {
   assert.equal(normaliseSyncPayload({}), null)
   assert.equal(normaliseSyncPayload({ equipment: [], levels: {} }), null)
 })
+
+const { buildLoadoutUpdate, SLOT_NAMES } = require('../plugin-link')
+
+test('loadout maps RuneLite slots onto the calculator names', () => {
+  const update = buildLoadoutUpdate([
+    { slot: 'WEAPON', itemId: 4151 },
+    { slot: 'AMULET', itemId: 6585 },
+    { slot: 'GLOVES', itemId: 7462 },
+    { slot: 'BOOTS', itemId: 11732 },
+  ])
+  assert.equal(update.weapon, 4151)
+  assert.equal(update.neck, 6585, 'AMULET maps to neck')
+  assert.equal(update.hands, 7462, 'GLOVES maps to hands')
+  assert.equal(update.feet, 11732, 'BOOTS maps to feet')
+})
+
+test('loadout nulls slots the player is not wearing', () => {
+  // Otherwise a previously saved item would linger in an empty slot.
+  const update = buildLoadoutUpdate([{ slot: 'WEAPON', itemId: 4151 }])
+  assert.equal(update.weapon, 4151)
+  for (const slot of ['head', 'body', 'legs', 'feet', 'cape', 'neck', 'ring']) {
+    assert.equal(update[slot], null, `${slot} should be cleared`)
+  }
+})
+
+test('loadout ignores cosmetic slots with no calculator equivalent', () => {
+  const update = buildLoadoutUpdate([
+    { slot: 'ARMS', itemId: 111 },
+    { slot: 'HAIR', itemId: 222 },
+    { slot: 'JAW', itemId: 333 },
+  ])
+  assert.ok(!Object.values(update).includes(111))
+  assert.ok(!Object.values(update).includes(222))
+  assert.ok(!Object.values(update).includes(333))
+})
+
+test('loadout never writes a "spec wep" slot', () => {
+  // It has no in-game equivalent, so it must be left as the user set it.
+  const update = buildLoadoutUpdate([{ slot: 'WEAPON', itemId: 4151 }])
+  assert.ok(!('spec wep' in update))
+})
+
+test('every mapped slot name is one the calculator knows', () => {
+  const known = [
+    'head',
+    'body',
+    'legs',
+    'feet',
+    'weapon',
+    'shield',
+    'ammo',
+    'cape',
+    'hands',
+    'neck',
+    'ring',
+  ]
+  for (const name of Object.values(SLOT_NAMES)) {
+    assert.ok(known.includes(name), `unknown slot name: ${name}`)
+  }
+})

@@ -74,6 +74,50 @@ const resolvePluginToken = async req => {
   return revoked ? null : uid
 }
 
+/**
+ * RuneLite's equipment slots to the slot names the DPS calculator stores under
+ * players/$uid/loadouts/default/<style>. Kept server-side so the plugin does
+ * not need to know the webapp's schema.
+ *
+ * ARMS, HAIR and JAW are cosmetic layers with no calculator equivalent, and
+ * "spec wep" has no in-game slot at all, so neither is written.
+ */
+const SLOT_NAMES = {
+  HEAD: 'head',
+  CAPE: 'cape',
+  AMULET: 'neck',
+  WEAPON: 'weapon',
+  BODY: 'body',
+  SHIELD: 'shield',
+  LEGS: 'legs',
+  GLOVES: 'hands',
+  BOOTS: 'feet',
+  RING: 'ring',
+  AMMO: 'ammo',
+}
+
+const COMBAT_STYLES = ['melee', 'ranged', 'magic']
+
+/**
+ * Builds the loadout record the calculator reads. Every mappable slot is
+ * written, using null for empty ones, so equipping nothing in a slot clears
+ * whatever was there rather than leaving a stale item behind.
+ */
+const buildLoadoutUpdate = equipment => {
+  const update = {}
+  for (const slot of Object.values(SLOT_NAMES)) {
+    update[slot] = null
+  }
+
+  for (const worn of equipment) {
+    const slot = SLOT_NAMES[worn.slot]
+    if (slot) {
+      update[slot] = worn.itemId
+    }
+  }
+  return update
+}
+
 const register = app => {
   /**
    * Webapp asks for a code to show the user. Requires a signed-in user, so the
@@ -154,6 +198,38 @@ const register = app => {
     return res.json({ ok: true })
   })
 
+  /**
+   * Copies what the player is wearing into one of the calculator's loadouts.
+   * Driven by a button in the plugin rather than the automatic sync, because
+   * silently overwriting a loadout the user built by hand would be hostile.
+   */
+  app.post('/api/plugin/loadout', async (req, res) => {
+    const uid = await resolvePluginToken(req)
+    if (!uid) {
+      return res.status(401).json({ error: 'Invalid or revoked plugin token.' })
+    }
+
+    const combatStyle = String(req.body?.combatStyle || '').toLowerCase()
+    if (!COMBAT_STYLES.includes(combatStyle)) {
+      return res
+        .status(400)
+        .json({
+          error: `combatStyle must be one of ${COMBAT_STYLES.join(', ')}`,
+        })
+    }
+
+    const payload = normaliseSyncPayload(req.body)
+    if (!payload || !payload.equipment.length) {
+      return res.status(400).json({ error: 'No equipment in the payload.' })
+    }
+
+    await db()
+      .ref(`players/${uid}/loadouts/default/${combatStyle}`)
+      .update(buildLoadoutUpdate(payload.equipment))
+
+    return res.json({ ok: true, combatStyle })
+  })
+
   /** Lets the webapp cut the plugin off without touching the database by hand. */
   app.post('/api/plugin/revoke', async (req, res) => {
     const uid = await requireWebUser(req)
@@ -213,5 +289,7 @@ module.exports = {
   generatePairingCode,
   hashToken,
   normaliseSyncPayload,
+  buildLoadoutUpdate,
+  SLOT_NAMES,
   PAIRING_CODE_TTL_MS,
 }

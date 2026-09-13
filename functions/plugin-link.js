@@ -211,11 +211,9 @@ const register = app => {
 
     const combatStyle = String(req.body?.combatStyle || '').toLowerCase()
     if (!COMBAT_STYLES.includes(combatStyle)) {
-      return res
-        .status(400)
-        .json({
-          error: `combatStyle must be one of ${COMBAT_STYLES.join(', ')}`,
-        })
+      return res.status(400).json({
+        error: `combatStyle must be one of ${COMBAT_STYLES.join(', ')}`,
+      })
     }
 
     const payload = normaliseSyncPayload(req.body)

@@ -22,7 +22,7 @@ import {
   User,
 } from 'firebase/auth'
 import { auth, provider } from '@/utils/firebaseConfig'
-import { getThemeByName, palettes } from '@/theme/index.js'
+import { getThemeByName, palettes } from '@/theme'
 import ThemeSwitcher from '@/theme/ThemeSwitcher'
 
 function App() {
@@ -61,16 +61,16 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-  const navLinkStyle = {
+  // NavLink adds the `active` class itself, so the active state is expressed
+  // as a selector rather than a render callback.
+  const navLinkSx = {
     my: 2,
     color: 'white',
     display: 'block',
     textDecoration: 'none',
-  }
-
-  const activeLinkStyle = {
-    ...navLinkStyle,
-    textDecoration: 'underline',
+    '&.active': {
+      textDecoration: 'underline',
+    },
   }
 
   return (
@@ -83,28 +83,28 @@ function App() {
               <Button
                 component={NavLink}
                 to='/'
-                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+                sx={navLinkSx}
               >
                 Home
               </Button>
               <Button
                 component={NavLink}
                 to='/dps-calculator'
-                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+                sx={navLinkSx}
               >
                 DPS Calculator
               </Button>
               <Button
                 component={NavLink}
                 to='/item-search'
-                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+                sx={navLinkSx}
               >
                 Equipment Search
               </Button>
               <Button
                 component={NavLink}
                 to='/progression-tree'
-                style={({ isActive }) => (isActive ? activeLinkStyle : navLinkStyle)}
+                sx={navLinkSx}
               >
                 Map
               </Button>

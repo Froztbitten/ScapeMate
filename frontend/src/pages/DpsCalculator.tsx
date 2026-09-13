@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Box, Button, Typography, Paper, useMediaQuery, Grid } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import ChevronRight from '@mui/icons-material/ChevronRight'
@@ -80,10 +80,6 @@ const DataVisualizationLayout: React.FC = () => {
   const [leftPanelOpen, setLeftPanelOpen] = useState<boolean>(true)
   const [rightPanelOpen, setRightPanelOpen] = useState<boolean>(true)
   const mainContentRef = useRef<HTMLDivElement>(null)
-
-  const isSmallScreen = useMediaQuery((theme: any) =>
-    theme.breakpoints.down('md')
-  )
 
   useEffect(() => {
     const handleResize = () => {

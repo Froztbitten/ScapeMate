@@ -4,14 +4,15 @@ import { ref, get, update } from 'firebase/database'
 import { AuthContext } from '@/context/AuthContext'
 
 interface StanceContextProps {
-  stances: Record<string, number>
-  setStances: React.Dispatch<React.SetStateAction<Record<string, number>>>
+  /** Selected attack-style indices, keyed by lowercased combat style. */
+  stances: Record<string, number[]>
+  setStances: React.Dispatch<React.SetStateAction<Record<string, number[]>>>
 }
 
 const StanceContext = createContext<StanceContextProps | undefined>(undefined)
 
 export const StancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [stances, setStances] = useState<Record<string, number>>({})
+  const [stances, setStances] = useState<Record<string, number[]>>({})
 
   const { user, loading } = useContext(AuthContext)
 

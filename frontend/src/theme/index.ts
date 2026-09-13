@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme, type ThemeOptions } from '@mui/material/styles'
 import {
   blueGrey,
   grey,
@@ -16,7 +16,7 @@ import {
   common,
 } from '@mui/material/colors'
 
-const baseThemeConfig = {
+const baseThemeConfig: ThemeOptions = {
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h1: { fontSize: '2.5rem', fontWeight: 500 },
@@ -50,7 +50,7 @@ const baseThemeConfig = {
   },
 }
 
-export const palettes = {
+export const palettes: Record<string, ThemeOptions> = {
   'Navigation Calculator': {
     palette: {
       mode: 'dark',
@@ -198,8 +198,8 @@ export const palettes = {
   },
 }
 
-export const getThemeByName = themeName => {
+export const getThemeByName = (themeName: string) => {
   const selectedPaletteConfig =
-    palettes[themeName] || palettes['Navigation Calculator']
+    palettes[themeName] ?? palettes['Navigation Calculator']
   return createTheme(baseThemeConfig, selectedPaletteConfig)
 }

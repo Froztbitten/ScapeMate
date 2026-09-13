@@ -42,7 +42,7 @@ function Loadout() {
   const [combatStyle, setCombatStyle] = useState(combatStyleTabs[0])
   const { saveCombatStyleToFirebase, loadCombatStyleFromFirebase } = useLoadout()
 
-  const handleChange = async (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = async (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
     const newCombatStyle = combatStyleTabs[newValue]
     setCombatStyle(newCombatStyle)

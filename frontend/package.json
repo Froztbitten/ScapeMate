@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --mode development",
-    "build": "vite build",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy --only hosting"
   },

@@ -312,7 +312,7 @@ const ProgressionTree: React.FC = () => {
     }
   }
 
-  const handleNodeSizeChange = (event: Event, newValue: number) => {
+  const handleNodeSizeChange = (_event: Event, newValue: number) => {
     setNodeSize(newValue)
 
     setNodes((prevNodes) =>

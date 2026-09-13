@@ -8,11 +8,11 @@ Deployed at <https://scapemate.net>.
 
 ## Layout
 
-| Path        | What it is                                                        |
-| ----------- | ----------------------------------------------------------------- |
-| `frontend/` | Vite + React + TypeScript app, MUI for UI, Konva for the map       |
-| `functions/`| Cloud Functions — an Express proxy for the OSRS hiscores API       |
-| `scripts/`  | Python scrapers that regenerate the game data in `frontend/public` |
+| Path         | What it is                                                         |
+| ------------ | ------------------------------------------------------------------ |
+| `frontend/`  | Vite + React + TypeScript app, MUI for UI, Konva for the map       |
+| `functions/` | Cloud Functions — an Express proxy for the OSRS hiscores API       |
+| `scripts/`   | Python scrapers that regenerate the game data in `frontend/public` |
 
 ## Prerequisites
 
@@ -40,15 +40,15 @@ run the emulators (below) and use the emulator URL.
 
 Run these from `frontend/`:
 
-| Command             | What it does                                  |
-| ------------------- | --------------------------------------------- |
-| `npm run dev`       | Dev server on port 5173                       |
-| `npm run build`     | Typecheck (`tsc -b`) then bundle              |
-| `npm run typecheck` | Typecheck only                                |
-| `npm run lint`      | ESLint                                        |
-| `npm test`          | Vitest, single run                            |
-| `npm run test:watch`| Vitest in watch mode                          |
-| `npm run coverage`  | Vitest with a coverage report                 |
+| Command              | What it does                     |
+| -------------------- | -------------------------------- |
+| `npm run dev`        | Dev server on port 5173          |
+| `npm run build`      | Typecheck (`tsc -b`) then bundle |
+| `npm run typecheck`  | Typecheck only                   |
+| `npm run lint`       | ESLint                           |
+| `npm test`           | Vitest, single run               |
+| `npm run test:watch` | Vitest in watch mode             |
+| `npm run coverage`   | Vitest with a coverage report    |
 
 `npm run build` fails on type errors. That is deliberate — it previously ran
 `vite build` alone, which strips types without checking them.

@@ -38,3 +38,4 @@ frontend/node/
 # Python scraper virtualenvs / caches
 scripts/.venv/
 scripts/__pycache__/
+coverage

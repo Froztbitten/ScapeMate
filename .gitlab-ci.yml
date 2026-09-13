@@ -1,0 +1,68 @@
+# Runs on every push. The frontend build already runs `tsc -b` first, so a
+# type error fails the pipeline rather than shipping silently.
+default:
+  image: node:22
+  interruptible: true
+
+stages:
+  - check
+
+.frontend:
+  stage: check
+  before_script:
+    - cd frontend
+    - npm ci --no-audit --no-fund
+  cache:
+    key:
+      files:
+        - frontend/package-lock.json
+    paths:
+      - frontend/.npm/
+
+frontend:lint:
+  extends: .frontend
+  script:
+    - npm run lint
+
+frontend:typecheck:
+  extends: .frontend
+  script:
+    - npm run typecheck
+
+frontend:test:
+  extends: .frontend
+  script:
+    - npm run coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d.]+)/'
+  artifacts:
+    when: always
+    paths:
+      - frontend/coverage/
+    expire_in: 1 week
+
+frontend:build:
+  extends: .frontend
+  script:
+    # `build` is `tsc -b && vite build`, so this gates on types too.
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 week
+
+functions:lint:
+  stage: check
+  before_script:
+    - cd functions
+    - npm ci --no-audit --no-fund
+  script:
+    - npm run lint
+
+format:
+  stage: check
+  before_script:
+    - cd frontend && npm ci --no-audit --no-fund && cd ..
+  script:
+    # Prettier lives in frontend/, but the config and ignore file are at the
+    # repo root, so check the whole tree from here.
+    - ./frontend/node_modules/.bin/prettier --check .

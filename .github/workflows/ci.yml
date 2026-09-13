@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+# A new push to the same branch cancels the previous run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run coverage
+      - name: Build
+        # `build` is `tsc -b && vite build`, so this gates on types too.
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: frontend/dist/
+          retention-days: 7
+
+  functions:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: frontend
+      # Prettier lives in frontend/, but the config and ignore file are at the
+      # repo root, so check the whole tree from here.
+      - run: ./frontend/node_modules/.bin/prettier --check .

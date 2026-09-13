@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useMemo, useState } from 'react'
+import { SetStateAction, Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import {
   AppBar,
   Toolbar,
@@ -8,12 +8,10 @@ import {
   CssBaseline,
   Tooltip,
   Avatar,
+  CircularProgress,
 } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import { Routes, Route, NavLink } from 'react-router-dom'
-import ProgressionTree from '@/pages/ProgressionTree.tsx'
-import DpsCalculator from '@/pages/DpsCalculator.tsx'
-import ItemSearch from '@/pages/ItemSearch.tsx'
 import HomePage from '@/pages/HomePage.tsx'
 import {
   onAuthStateChanged,
@@ -24,6 +22,12 @@ import {
 import { auth, provider } from '@/utils/firebaseConfig'
 import { getThemeByName, palettes } from '@/theme'
 import ThemeSwitcher from '@/theme/ThemeSwitcher'
+
+// Split per route: the charts and canvas libraries are only needed once the
+// user actually opens those pages.
+const ProgressionTree = lazy(() => import('@/pages/ProgressionTree.tsx'))
+const DpsCalculator = lazy(() => import('@/pages/DpsCalculator.tsx'))
+const ItemSearch = lazy(() => import('@/pages/ItemSearch.tsx'))
 
 function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
@@ -146,12 +150,14 @@ function App() {
           </Toolbar>
         </AppBar>
         <Box sx={{ height: '100%' }}>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/dps-calculator' element={<DpsCalculator />} />
-            <Route path='/item-search' element={<ItemSearch />} />
-            <Route path='/progression-tree' element={<ProgressionTree />} />
-          </Routes>
+          <Suspense fallback={<CircularProgress sx={{ mt: 4 }} />}>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route path='/dps-calculator' element={<DpsCalculator />} />
+              <Route path='/item-search' element={<ItemSearch />} />
+              <Route path='/progression-tree' element={<ProgressionTree />} />
+            </Routes>
+          </Suspense>
         </Box>
       </Container>
     </ThemeProvider>

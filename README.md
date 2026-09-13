@@ -82,4 +82,9 @@ cd frontend && npm run deploy   # build + deploy hosting
 cd functions && npm run deploy  # deploy functions
 ```
 
-Database rules deploy with `firebase deploy --only database`.
+Database rules live in `database.rules.json`, which mirrors what is
+deployed. Change them there, not in the console, then:
+
+```bash
+firebase deploy --only database
+```

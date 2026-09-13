@@ -1,11 +1,10 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false,
     "players": {
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
+        // Only the authenticated user with this uid can read/write their own data
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
       }
     }
   }

@@ -88,7 +88,11 @@ test('sync payload rejects empty or junk bodies', () => {
   assert.equal(normaliseSyncPayload({ equipment: [], levels: {} }), null)
 })
 
-const { buildLoadoutUpdate, SLOT_NAMES } = require('../plugin-link')
+const {
+  buildLoadoutUpdate,
+  buildPlayerSyncUpdate,
+  SLOT_NAMES,
+} = require('../plugin-link')
 
 test('loadout maps RuneLite slots onto the calculator names', () => {
   const update = buildLoadoutUpdate([
@@ -146,4 +150,28 @@ test('every mapped slot name is one the calculator knows', () => {
   for (const name of Object.values(SLOT_NAMES)) {
     assert.ok(known.includes(name), `unknown slot name: ${name}`)
   }
+})
+
+test('live melee sync updates every mapped loadout slot atomically', () => {
+  const update = buildPlayerSyncUpdate(
+    {
+      equipment: [{ slot: 'WEAPON', itemId: 4151 }],
+      levels: { Attack: 99 },
+    },
+    true
+  )
+
+  assert.equal(update['loadouts/default/melee/weapon'], 4151)
+  assert.equal(update['loadouts/default/melee/head'], null)
+  assert.equal(update.live.levels.Attack, 99)
+  assert.ok(Number.isInteger(update.live.updatedAt))
+  assert.ok(!('loadouts/default/melee/spec wep' in update))
+})
+
+test('ordinary plugin sync leaves calculator loadouts alone', () => {
+  const update = buildPlayerSyncUpdate(
+    { equipment: [{ slot: 'WEAPON', itemId: 4151 }], levels: {} },
+    false
+  )
+  assert.deepEqual(Object.keys(update), ['live'])
 })

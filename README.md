@@ -8,16 +8,16 @@ Deployed at <https://scapemate.net>.
 
 ## Layout
 
-| Path         | What it is                                                         |
-| ------------ | ------------------------------------------------------------------ |
-| `frontend/`  | Vite + React + TypeScript app, MUI for UI, Konva for the map       |
-| `functions/` | Cloud Functions — an Express proxy for the OSRS hiscores API       |
-| `scripts/`   | Python scrapers that regenerate the game data in `frontend/public` |
+| Path         | What it is                                                   |
+| ------------ | ------------------------------------------------------------ |
+| `frontend/`  | Vite + React + TypeScript app, MUI for UI, Konva for the map |
+| `functions/` | Cloud Functions — an Express proxy for the OSRS hiscores API |
+| `scripts/`   | Validated OSRS data sync and documented exception layer      |
 
 ## Prerequisites
 
 - Node.js 22 or newer (`functions/` pins Node 22 to match the Cloud Functions runtime)
-- Python 3.9+, only if you need to re-run the scrapers
+- Python 3.10+, only if you need to refresh the game data
 - `npm install -g firebase-tools`
 
 ## Setup
@@ -40,17 +40,20 @@ run the emulators (below) and use the emulator URL.
 
 Run these from `frontend/`:
 
-| Command              | What it does                              |
-| -------------------- | ----------------------------------------- |
-| `npm run dev`        | Dev server on port 5173                   |
-| `npm run dev:all`    | Dev server **and** the functions emulator |
-| `npm run emulators`  | Functions emulator only                   |
-| `npm run build`      | Typecheck (`tsc -b`) then bundle          |
-| `npm run typecheck`  | Typecheck only                            |
-| `npm run lint`       | ESLint                                    |
-| `npm test`           | Vitest, single run                        |
-| `npm run test:watch` | Vitest in watch mode                      |
-| `npm run coverage`   | Vitest with a coverage report             |
+| Command              | What it does                               |
+| -------------------- | ------------------------------------------ |
+| `npm run dev`        | Dev server on port 5173                    |
+| `npm run dev:all`    | Dev server **and** the functions emulator  |
+| `npm run emulators`  | Functions emulator only                    |
+| `npm run build`      | Typecheck (`tsc -b`) then bundle           |
+| `npm run typecheck`  | Typecheck only                             |
+| `npm run lint`       | ESLint                                     |
+| `npm test`           | Vitest, single run                         |
+| `npm run test:watch` | Vitest in watch mode                       |
+| `npm run coverage`   | Vitest with a coverage report              |
+| `npm run data:sync`  | Download and regenerate OSRS data          |
+| `npm run data:check` | Validate generated data and its unit tests |
+| `npm run verify`     | Run all local data and frontend checks     |
 
 `npm run build` fails on type errors. That is deliberate — it previously ran
 `vite build` alone, which strips types without checking them.
@@ -79,15 +82,20 @@ same network. Emulator UI is on port 4000.
 
 ## Regenerating game data
 
-The JSON in `frontend/public/` is scraped from the OSRS Wiki:
+The JSON in `frontend/public/` is converted from the free, open dataset built
+by the [OSRS Wiki DPS calculator](https://github.com/weirdgloop/osrs-dps-calc).
+It is pinned to one upstream commit, validated before replacement, and refreshed
+daily by `.github/workflows/sync-osrs-data.yml`:
 
 ```bash
-cd scripts
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python osrs_scraper_monster_stats.py
-python osrs_scraper_weapon_armor_stats.py
+cd frontend
+npm run data:sync
+npm run data:check
 ```
+
+No Python packages are required. Data corrections and exclusions belong in
+`scripts/osrs_data_overrides.json`, where every ID patch must include a reason
+and source. See `scripts/README.md` for the format and maintenance policy.
 
 ## Deploying
 

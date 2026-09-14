@@ -61,17 +61,18 @@ const requireWebUser = async req => {
   }
 }
 
-/** Resolves a plugin bearer token to the uid that issued it. */
+/** Resolves a plugin bearer token to its account and server-side preferences. */
 const resolvePluginToken = async req => {
   const header = req.get('Authorization') || ''
   const match = header.match(/^Bearer (.+)$/)
   if (!match) return null
-  const snapshot = await db()
-    .ref(`pluginTokens/${hashToken(match[1])}`)
-    .get()
+  const tokenRef = db().ref(`pluginTokens/${hashToken(match[1])}`)
+  const snapshot = await tokenRef.get()
   if (!snapshot.exists()) return null
-  const { uid, revoked } = snapshot.val()
-  return revoked ? null : uid
+  const { uid, revoked, liveMeleeLoadout } = snapshot.val()
+  return revoked
+    ? null
+    : { uid, tokenRef, liveMeleeLoadout: !!liveMeleeLoadout }
 }
 
 /**
@@ -113,6 +114,21 @@ const buildLoadoutUpdate = equipment => {
     const slot = SLOT_NAMES[worn.slot]
     if (slot) {
       update[slot] = worn.itemId
+    }
+  }
+  return update
+}
+
+/** Builds one atomic update beneath players/$uid for a plugin snapshot. */
+const buildPlayerSyncUpdate = (payload, liveMeleeLoadout) => {
+  const update = {
+    live: { ...payload, updatedAt: Date.now() },
+  }
+  if (liveMeleeLoadout) {
+    for (const [slot, itemId] of Object.entries(
+      buildLoadoutUpdate(payload.equipment)
+    )) {
+      update[`loadouts/default/melee/${slot}`] = itemId
     }
   }
   return update
@@ -175,8 +191,8 @@ const register = app => {
    * user's own subtree so the webapp reads it with the rules it already has.
    */
   app.post('/api/plugin/sync', async (req, res) => {
-    const uid = await resolvePluginToken(req)
-    if (!uid) {
+    const plugin = await resolvePluginToken(req)
+    if (!plugin) {
       return res.status(401).json({ error: 'Invalid or revoked plugin token.' })
     }
 
@@ -185,7 +201,7 @@ const register = app => {
       return res.status(400).json({ error: 'Malformed sync payload.' })
     }
 
-    const liveRef = db().ref(`players/${uid}/live`)
+    const liveRef = db().ref(`players/${plugin.uid}/live`)
     const previous = await liveRef.get()
     if (previous.exists()) {
       const since = Date.now() - (previous.val().updatedAt || 0)
@@ -194,18 +210,20 @@ const register = app => {
       }
     }
 
-    await liveRef.set({ ...payload, updatedAt: Date.now() })
+    await db()
+      .ref(`players/${plugin.uid}`)
+      .update(buildPlayerSyncUpdate(payload, plugin.liveMeleeLoadout))
     return res.json({ ok: true })
   })
 
   /**
    * Copies what the player is wearing into one of the calculator's loadouts.
-   * Driven by a button in the plugin rather than the automatic sync, because
-   * silently overwriting a loadout the user built by hand would be hostile.
+   * The melee button also records explicit consent on this plugin token for
+   * later automatic syncs to keep that loadout current.
    */
   app.post('/api/plugin/loadout', async (req, res) => {
-    const uid = await resolvePluginToken(req)
-    if (!uid) {
+    const plugin = await resolvePluginToken(req)
+    if (!plugin) {
       return res.status(401).json({ error: 'Invalid or revoked plugin token.' })
     }
 
@@ -222,10 +240,14 @@ const register = app => {
     }
 
     await db()
-      .ref(`players/${uid}/loadouts/default/${combatStyle}`)
+      .ref(`players/${plugin.uid}/loadouts/default/${combatStyle}`)
       .update(buildLoadoutUpdate(payload.equipment))
 
-    return res.json({ ok: true, combatStyle })
+    if (combatStyle === 'melee') {
+      await plugin.tokenRef.update({ liveMeleeLoadout: true })
+    }
+
+    return res.json({ ok: true, combatStyle, live: combatStyle === 'melee' })
   })
 
   /**
@@ -234,12 +256,12 @@ const register = app => {
    * broken link can be told apart from a sync that had nothing to send.
    */
   app.post('/api/plugin/ping', async (req, res) => {
-    const uid = await resolvePluginToken(req)
-    if (!uid) {
+    const plugin = await resolvePluginToken(req)
+    if (!plugin) {
       return res.status(401).json({ error: 'Invalid or revoked plugin token.' })
     }
 
-    const live = await db().ref(`players/${uid}/live`).get()
+    const live = await db().ref(`players/${plugin.uid}/live`).get()
     return res.json({
       ok: true,
       lastSyncAt: live.exists() ? live.val().updatedAt || null : null,
@@ -306,6 +328,7 @@ module.exports = {
   hashToken,
   normaliseSyncPayload,
   buildLoadoutUpdate,
+  buildPlayerSyncUpdate,
   SLOT_NAMES,
   PAIRING_CODE_TTL_MS,
 }

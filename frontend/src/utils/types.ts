@@ -30,7 +30,7 @@ export interface Equipment {
 }
 
 /**
- * One variant of a monster, as scraped from an OSRS Wiki infobox into
+ * One variant of a monster, converted from the OSRS Wiki DPS dataset into
  * `public/monsters_bosses.json`.
  *
  * Every value arrives as a string, including the numeric ones ("147"), so
@@ -86,6 +86,7 @@ export interface Monster {
 
 export interface ItemDataContextState {
   allItems: Record<number, Equipment>
+  resolveItemById: (itemId: number) => Equipment | undefined
   isLoading: boolean
   error: Error | null
 }

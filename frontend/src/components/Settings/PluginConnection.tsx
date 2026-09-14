@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
+  Box,
   Button,
   Chip,
   CircularProgress,
-  Container,
   Divider,
   Paper,
   Stack,
@@ -48,7 +48,7 @@ const formatRemaining = (ms: number) => {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`
 }
 
-function ConnectPlugin() {
+function PluginConnection() {
   const { user, loading } = useAuth()
   const [code, setCode] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<number>(0)
@@ -106,33 +106,23 @@ function ConnectPlugin() {
   }, [])
 
   if (loading) {
-    return (
-      <Container sx={{ py: 6 }}>
-        <CircularProgress />
-      </Container>
-    )
+    return <CircularProgress />
   }
 
   if (!user) {
     return (
-      <Container sx={{ py: 6, maxWidth: 640 }}>
-        <Typography variant='h4' gutterBottom>
-          Connect RuneLite
-        </Typography>
+      <Box>
         <Alert severity='info'>
           Sign in with Google to link the ScapeMate plugin to your account.
         </Alert>
-      </Container>
+      </Box>
     )
   }
 
   const expired = Boolean(code) && expiresAt <= now
 
   return (
-    <Container sx={{ py: 6, maxWidth: 720, textAlign: 'left' }}>
-      <Typography variant='h4' gutterBottom>
-        Connect RuneLite
-      </Typography>
+    <Box>
       <Typography variant='body1' sx={{ mb: 3 }}>
         The ScapeMate RuneLite plugin can push your worn equipment and skill
         levels here, so the DPS calculator fills itself in while you play.
@@ -199,13 +189,14 @@ function ConnectPlugin() {
           ) : (
             <>
               <Typography variant='body2' color='text.secondary'>
-                Pairing alone does not send anything. In RuneLite, open the
-                ScapeMate panel and check that all three rows are ticked, then
-                press <strong>Sync gear and levels now</strong>.
+                Pairing alone does not send anything. In the RuneLite plugin
+                settings, enable <strong>Send my data to scapemate.net</strong>,
+                then press <strong>Set equipped as melee loadout</strong> in the
+                ScapeMate panel.
               </Typography>
               <Typography variant='body2' color='text.secondary'>
-                <strong>Test connection</strong> in that panel says whether the
-                plugin can reach the server at all.
+                <strong>Test connection</strong> in the plugin settings says
+                whether the plugin can reach the server at all.
               </Typography>
             </>
           )}
@@ -230,8 +221,8 @@ function ConnectPlugin() {
       <Button variant='outlined' color='error' onClick={revoke} disabled={busy}>
         Revoke plugin access
       </Button>
-    </Container>
+    </Box>
   )
 }
 
-export default ConnectPlugin
+export default PluginConnection

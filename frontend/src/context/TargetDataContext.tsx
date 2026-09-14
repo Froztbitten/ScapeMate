@@ -52,11 +52,11 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
       const snapshot = await get(monsterRef)
       if (snapshot.exists()) {
         const monsterId = snapshot.val()[0]
-        const foundMonster = allMonsters.find(m => {
-          for (const variant in m.variants) {
-            return m.variants[variant].NPC_ID === monsterId
-          }
-        })
+        const foundMonster = allMonsters.find(m =>
+          Object.values(m.variants).some(
+            variant => variant.NPC_ID === monsterId
+          )
+        )
         if (foundMonster) {
           const variant = Object.keys(foundMonster.variants).find(
             key => foundMonster.variants[key].NPC_ID === monsterId
@@ -78,7 +78,15 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
   const saveMonsterToRTDB = async (selectedMonster: Monster | null) => {
     console.log(selectedMonster)
     if (!selectedMonster) return
-    setSelectedMonsters([selectedMonster])
+
+    const selectedVariant =
+      selectedMonster.selectedVariant ??
+      Object.keys(selectedMonster.variants)[0]
+    const variant = selectedMonster.variants[selectedVariant]
+    if (!variant) return
+
+    const resolvedMonster = { ...selectedMonster, selectedVariant }
+    setSelectedMonsters([resolvedMonster])
 
     if (!user) {
       console.warn('User not authenticated, cannot save monster.')
@@ -87,15 +95,7 @@ const MonsterDataProvider: React.FC<MonsterProviderProps> = ({ children }) => {
 
     try {
       const monsterRef = ref(database, `players/${user.uid}/loadouts/default`)
-      const monstersIds = []
-      const monsterIdToSave =
-        selectedMonster.selectedVariant != null
-          ? selectedMonster.variants[selectedMonster.selectedVariant].NPC_ID
-          : selectedMonster.variants['No variant'].NPC_ID
-
-      monstersIds.push(monsterIdToSave)
-
-      await update(monsterRef, { monsters: monstersIds })
+      await update(monsterRef, { monsters: [variant.NPC_ID] })
     } catch (err) {
       console.log(err)
     }

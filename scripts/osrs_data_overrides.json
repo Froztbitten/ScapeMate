@@ -1,0 +1,19 @@
+{
+  "equipment": {
+    "category_aliases": {
+      "2h Sword": "2h",
+      "Flail": "Blunt",
+      "Multi-Melee": "Spear",
+      "Powered Staff": "Powered",
+      "Slash Sword": "Slash",
+      "Stab Sword": "Stab",
+      "blunt": "Blunt"
+    },
+    "exclude_ids": [],
+    "patches": {}
+  },
+  "monsters": {
+    "exclude_ids": [],
+    "patches": {}
+  }
+}

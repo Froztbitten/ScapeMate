@@ -108,7 +108,7 @@ const MonsterAutocomplete: React.FC = () => {
   const getImage = (variantData: MonsterVariant | undefined) => {
     if (!variantData) return undefined
     if (!variantData['Image']) return undefined
-    return `https://oldschool.runescape.wiki/images/${variantData['Image']}`
+    return `https://oldschool.runescape.wiki/w/Special:Redirect/file/${encodeURIComponent(variantData['Image'])}`
   }
 
   const getElementalWeaknessImage = (

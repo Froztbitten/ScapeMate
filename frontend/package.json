@@ -14,6 +14,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
+    "data:sync": "python ../scripts/sync_osrs_data.py",
+    "data:check": "python ../scripts/sync_osrs_data.py --check && python ../scripts/test_sync_osrs_data.py",
+    "verify": "npm run data:check && npm run lint && npm run typecheck && npm test && npm run build",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy --only hosting"
   },

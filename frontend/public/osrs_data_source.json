@@ -1,0 +1,13 @@
+{
+  "source": "https://github.com/weirdgloop/osrs-dps-calc",
+  "source_commit": "89c3e25b344aea90d0189746e4b5f73dde0f0383",
+  "equipment_count": 5436,
+  "monster_variant_count": 2860,
+  "equipment_alias_count": 6,
+  "unresolved_alias_count": 1,
+  "sha256": {
+    "equipment": "3451f46d8a6ab7c36189c53b7fc8a6c97e75f5af41d32e6f029f120b369fb591",
+    "monsters": "e6db7ae1608f2107cfaad0465069b9ccbf8ce49835e0d707decd796f08e74921",
+    "aliases": "4c7b266f8f2fbfae0cc41ff01aec2846c3db47b001ca704c2035b4d1273cd8b9"
+  }
+}

@@ -4,9 +4,10 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useCallback,
 } from 'react'
 import { AuthContext } from '@/context/AuthContext'
-import { ref, update, get } from 'firebase/database'
+import { ref, update, get, onValue } from 'firebase/database'
 import { Equipment } from '@/utils/types'
 import { database } from '@/utils/firebaseConfig'
 import { useItemData } from '@/context/ItemDataContext'
@@ -87,7 +88,7 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({
   })
 
   const { user, loading } = useContext(AuthContext)
-  const { allItems, isLoading: itemDataLoading } = useItemData()
+  const { resolveItemById, isLoading: itemDataLoading } = useItemData()
 
   const loadoutRef = useMemo(() => {
     if (user) {
@@ -125,7 +126,34 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const loadLoadoutFromFirebase = async () => {
+  const applyLoadedLoadout = useCallback(
+    (loadedLoadout: Record<string, Record<string, number | null>>) => {
+      setSelectedItems(previous => {
+        const next = { ...previous }
+
+        for (const combatStyle of ['melee', 'ranged', 'magic'] as const) {
+          const storedLoadout = loadedLoadout[combatStyle]
+          if (!storedLoadout || typeof storedLoadout !== 'object') continue
+
+          const restored: SelectedItems = { ...initialEquipmentState }
+          for (const slot of Object.keys(
+            initialEquipmentState
+          ) as EquipmentSlot[]) {
+            const itemId = storedLoadout[slot]
+            restored[slot] = itemId
+              ? (resolveItemById(itemId) ?? defaultItem)
+              : defaultItem
+          }
+          next[combatStyle] = restored
+        }
+
+        return next
+      })
+    },
+    [resolveItemById]
+  )
+
+  const loadLoadoutFromFirebase = useCallback(async () => {
     if (!user) {
       console.warn('User not logged in. Cannot load loadout.')
       return
@@ -134,48 +162,13 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const loadoutRef = ref(database, `players/${user.uid}/loadouts/default`)
       const snapshot = await get(loadoutRef)
-      if (snapshot.exists() && allItems) {
-        const loadedLoadout = snapshot.val()
-        const newSelectedItems = { ...selectedItems }
-
-        for (const combatStyle in loadedLoadout) {
-          if (
-            combatStyle == 'melee' ||
-            combatStyle == 'ranged' ||
-            combatStyle == 'magic'
-          ) {
-            const newCombatStyleLoadout: SelectedItems = {
-              ...initialEquipmentState,
-            }
-
-            for (const slot in initialEquipmentState) {
-              if (
-                Object.prototype.hasOwnProperty.call(
-                  loadedLoadout[combatStyle],
-                  slot
-                )
-              ) {
-                const itemId = loadedLoadout[combatStyle][slot]
-                if (itemId && allItems[itemId]) {
-                  const item = allItems[itemId]
-                  newCombatStyleLoadout[slot as EquipmentSlot] = item
-                } else {
-                  newCombatStyleLoadout[slot as EquipmentSlot] = defaultItem
-                }
-              }
-            }
-
-            newSelectedItems[combatStyle] = newCombatStyleLoadout
-            setSelectedItems(newSelectedItems)
-          }
-        }
-      } else {
-        console.log('No player name found for this user.')
+      if (snapshot.exists()) {
+        applyLoadedLoadout(snapshot.val())
       }
     } catch (err) {
-      console.error('Error saving loadout to Firebase:', err)
+      console.error('Error loading loadout from Firebase:', err)
     }
-  }
+  }, [user, applyLoadedLoadout])
 
   const saveCombatStyleToFirebase = async (combatStyle: number) => {
     if (!user || !loadoutRef) {
@@ -236,10 +229,13 @@ export const LoadoutProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   useEffect(() => {
-    if (!loading && user && !itemDataLoading) {
-      loadLoadoutFromFirebase()
-    }
-  }, [user, loading, itemDataLoading, allItems])
+    if (loading || !user || itemDataLoading) return
+
+    const liveLoadoutRef = ref(database, `players/${user.uid}/loadouts/default`)
+    return onValue(liveLoadoutRef, snapshot => {
+      if (snapshot.exists()) applyLoadedLoadout(snapshot.val())
+    })
+  }, [user, loading, itemDataLoading, applyLoadedLoadout])
 
   const contextValue: LoadoutContextState = useMemo(() => {
     return {

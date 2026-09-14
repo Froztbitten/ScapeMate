@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useContext,
   useMemo,
+  useCallback,
   ReactNode, // Import ReactNode for children type
 } from 'react'
 import type { ItemDataContextState, Equipment } from '@/utils/types' // Import types
@@ -12,6 +13,7 @@ import type { ItemDataContextState, Equipment } from '@/utils/types' // Import t
 // Define a default state matching the ItemDataContextState interface
 const defaultContextState: ItemDataContextState = {
   allItems: {},
+  resolveItemById: () => undefined,
   isLoading: true,
   error: null,
 }
@@ -30,6 +32,7 @@ export const ItemDataProvider: React.FC<ItemDataProviderProps> = ({
 }) => {
   // Use generics for useState
   const [allItems, setAllItems] = useState<Record<number, Equipment>>({})
+  const [aliases, setAliases] = useState<Record<number, number>>({})
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -39,13 +42,22 @@ export const ItemDataProvider: React.FC<ItemDataProviderProps> = ({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch('/weapons_armor_with_stats.json')
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+        const [itemsResponse, aliasesResponse] = await Promise.all([
+          fetch('/weapons_armor_with_stats.json'),
+          fetch('/equipment_aliases.json'),
+        ])
+        if (!itemsResponse.ok || !aliasesResponse.ok) {
+          throw new Error(
+            `Item data request failed: items ${itemsResponse.status}, aliases ${aliasesResponse.status}`
+          )
         }
-        // Assert the type of the parsed JSON data
-        const data = (await response.json()) as { [itemId: number]: Equipment }
+        const data = (await itemsResponse.json()) as Record<number, Equipment>
+        const aliasData = (await aliasesResponse.json()) as Record<
+          number,
+          number
+        >
         setAllItems(data || {})
+        setAliases(aliasData || {})
       } catch (e: unknown) {
         // Catch error as 'unknown'
         console.error('Failed to fetch item data:', e)
@@ -56,6 +68,7 @@ export const ItemDataProvider: React.FC<ItemDataProviderProps> = ({
           setError(new Error('An unknown error occurred during fetch.'))
         }
         setAllItems({})
+        setAliases({})
       } finally {
         setIsLoading(false)
       }
@@ -64,14 +77,23 @@ export const ItemDataProvider: React.FC<ItemDataProviderProps> = ({
     fetchData()
   }, []) // Empty dependency array remains the same
 
+  const resolveItemById = useCallback(
+    (itemId: number): Equipment | undefined => {
+      const canonicalId = aliases[itemId]
+      return allItems[itemId] ?? allItems[canonicalId]
+    },
+    [aliases, allItems]
+  )
+
   // 4. Memoize the context value. Types are inferred correctly now.
   const value = useMemo(
     () => ({
       allItems,
+      resolveItemById,
       isLoading,
       error,
     }),
-    [allItems, isLoading, error]
+    [allItems, resolveItemById, isLoading, error]
   )
 
   return (
